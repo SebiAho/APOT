@@ -4,22 +4,30 @@ using UnityEngine;
 
 public class UserHandler : MonoBehaviour
 {
+    //Camera
     [Header("Camera")]
     public Transform cameraTransform;
     public float cameraSpeed = 5.0f;
     public float cameraMaxVerRot = 90f;
+    [Tooltip("Button used to toggle camera movement lock on/off, can be disabled by leaving it empty")]
+    public string toggleCameraLockButton = "Fire1";
 
-    Vector3 cameraRotation;
+    Vector3 cameraRotation;//Used to calculate the camera rotation before adding it to the actual camera position
 
-    [Header("Movement")]
+    //User movement
     public CharacterController characterController;
     public float movementSpeed = 1.0f;
 
     public bool grafityEnabled = true;
     public float grafityValue = 9.81f;
 
-    float fallVelocity = 0f;
+    [Header("Button used to toggle user move speed modifier on off, can be disabled by leaving it empty")]
+    public string increaseSpeedButton = "Fire2";
+    public List<float> userMoveSpeedModifiers = new List<float> { 1f, 0.5f, 2f };
 
+    float fallVelocity = 0f; //Used to calculate the users fall speed
+
+    //Automatic movement
     [Tooltip("Move user automatically (note: cannot be changed after starting the program)?")]
     public bool automaticMovement = false;
     bool autoMove;
@@ -76,6 +84,8 @@ public class UserHandler : MonoBehaviour
 
         //Apply rotation
         cameraTransform.eulerAngles = cameraRotation;
+
+        //Toggle camera lock
     }
 
     //Movement
@@ -102,6 +112,8 @@ public class UserHandler : MonoBehaviour
             t_move.y = fallVelocity;
 
         }
+
+        //Change speed modifier
 
         //Move user
         characterController.Move(t_move * movementSpeed * Time.deltaTime);
