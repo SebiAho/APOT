@@ -9,10 +9,12 @@ public class UserHandler : MonoBehaviour
     public Transform cameraTransform;
     public float cameraSpeed = 5.0f;
     public float cameraMaxVerRot = 90f;
-    [Tooltip("Button used to toggle camera movement lock on/off, can be disabled by leaving it empty")]
-    public string toggleCameraLockButton = "Fire1";
 
     Vector3 cameraRotation;//Used to calculate the camera rotation before adding it to the actual camera position
+
+    [Tooltip("Button used to toggle camera movement lock on/off, can be disabled by leaving it empty, the defaul value revers to Left Alt and Right Mouse Button when using keyboard and mouse (with the default input manager settings)")]
+    public string lockCameraButton = "Fire2";
+    bool cameraLock = false;
 
     //User movement
     public CharacterController characterController;
@@ -21,11 +23,14 @@ public class UserHandler : MonoBehaviour
     public bool grafityEnabled = true;
     public float grafityValue = 9.81f;
 
-    [Header("Button used to toggle user move speed modifier on off, can be disabled by leaving it empty")]
-    public string increaseSpeedButton = "Fire2";
-    public List<float> userMoveSpeedModifiers = new List<float> { 1f, 0.5f, 2f };
-
     float fallVelocity = 0f; //Used to calculate the users fall speed
+
+    //Adjust user move speed
+    [Tooltip("Button used to toggle user move speed modifier on off, can be disabled by leaving it empty, the defaul value revers to Left Shift and Mouse Wheel Button when using keyboard and mouse (with the default input manager settings)")]
+    public string increaseSpeedButton = "Fire3";
+    public List<float> moveSpeedModifiers = new List<float> { 1f, 0.5f, 2f };
+    int moveSpeedModifierIndex = 0;
+    float currentMoveSpeedModifier;
 
     //Automatic movement
     [Tooltip("Move user automatically (note: cannot be changed after starting the program)?")]
@@ -47,6 +52,11 @@ public class UserHandler : MonoBehaviour
             if (characterController == null)
                 characterController = GetComponent<CharacterController>();
         }
+
+        //Ensure moveSpeedModifiers list isn't empty
+        if (moveSpeedModifiers.Count <= 0)
+            moveSpeedModifiers = new List<float> { 1 };
+
     }
 
     // Start is called before the first frame update
@@ -76,16 +86,22 @@ public class UserHandler : MonoBehaviour
     //Camera
     void CameraRotation(float p_mouseV, float p_mouseH)
     {
-        cameraRotation.x -= p_mouseV * cameraSpeed;
-        cameraRotation.y += p_mouseH * cameraSpeed;
+        if (!cameraLock)
+        {
+            cameraRotation.x -= p_mouseV * cameraSpeed;
+            cameraRotation.y += p_mouseH * cameraSpeed;
 
-        //Limit vertical rotation angle
-        cameraRotation.x = Mathf.Clamp(cameraRotation.x, -cameraMaxVerRot, cameraMaxVerRot);
+            //Limit vertical rotation angle
+            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -cameraMaxVerRot, cameraMaxVerRot);
 
-        //Apply rotation
-        cameraTransform.eulerAngles = cameraRotation;
+            //Apply rotation
+            cameraTransform.eulerAngles = cameraRotation;
+        }
 
         //Toggle camera lock
+        if (Input.GetButtonDown(lockCameraButton))
+            cameraLock = !cameraLock;
+
     }
 
     //Movement
@@ -98,7 +114,7 @@ public class UserHandler : MonoBehaviour
         if (t_move.sqrMagnitude > 1)
             t_move.Normalize();
 
-        if(grafityEnabled)
+        if (grafityEnabled)
         {
 
             //Reset velocity
@@ -113,9 +129,18 @@ public class UserHandler : MonoBehaviour
 
         }
 
-        //Change speed modifier
+        //Adjust user speed
+        if (Input.GetButtonDown(increaseSpeedButton))
+        {
+            if (moveSpeedModifierIndex < moveSpeedModifiers.Count - 1)
+                moveSpeedModifierIndex++;
+            else
+                moveSpeedModifierIndex = 0;
+        }
+
+        currentMoveSpeedModifier = moveSpeedModifiers[moveSpeedModifierIndex];
 
         //Move user
-        characterController.Move(t_move * movementSpeed * Time.deltaTime);
+        characterController.Move(t_move * movementSpeed * currentMoveSpeedModifier * Time.deltaTime);
     }
 }
