@@ -154,12 +154,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 330585546}
-  cameraSpeed: 5
-  cameraMaxVerRot: 90
   characterController: {fileID: 179478133}
+  verticalCameraInput: Mouse Y
+  horizontalCameraInput: Mouse X
+  verticalMovementInput: Vertical
+  horizontalMovementInput: Horizontal
+  jumpOrToggleGrafityInput: Jump
+  lockCameraInput: Fire2
+  increaseSpeedInput: Fire3
+  cameraSpeed: 5
+  cameraMaxVerticalRotation: 90
   movementSpeed: 25
-  grafityEnabled: 0
+  grafityEnabled: 1
   grafityValue: 9.81
+  useJumpInput: 1
+  jumpHeight: 1
+  moveSpeedModifiers:
+  - 1
+  - 0.5
+  - 2
   automaticMovement: 0
 --- !u!143 &179478133
 CharacterController:

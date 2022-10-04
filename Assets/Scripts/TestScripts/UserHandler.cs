@@ -4,36 +4,51 @@ using UnityEngine;
 
 public class UserHandler : MonoBehaviour
 {
+    public Transform cameraTransform;
+    public CharacterController characterController;
+
+    [Header("Input")]
+    public string verticalCameraInput = "Mouse Y";
+    public string horizontalCameraInput = "Mouse X";
+    public string verticalMovementInput = "Vertical";
+    public string horizontalMovementInput = "Horizontal";
+    [Tooltip("Button that is used to either jump or toggle grafity, depending on the setting")]
+    public string jumpOrToggleGrafityInput = "Jump";
+    
+    [Tooltip("Button used to toggle camera movement lock on/off, the defaul value revers to Left Alt and Right Mouse Button when using keyboard and mouse (with the default input manager settings)")]
+    public string lockCameraInput = "Fire2";
+    [Tooltip("Button used to toggle user move speed modifier on off, the defaul value revers to Left Shift and Mouse Wheel Button when using keyboard and mouse (with the default input manager settings)")]
+    public string increaseSpeedInput = "Fire3";
+
     //Camera
     [Header("Camera")]
-    public Transform cameraTransform;
     public float cameraSpeed = 5.0f;
-    public float cameraMaxVerRot = 90f;
-
+    public float cameraMaxVerticalRotation = 90f;
     Vector3 cameraRotation;//Used to calculate the camera rotation before adding it to the actual camera position
-
-    [Tooltip("Button used to toggle camera movement lock on/off, can be disabled by leaving it empty, the defaul value revers to Left Alt and Right Mouse Button when using keyboard and mouse (with the default input manager settings)")]
-    public string lockCameraButton = "Fire2";
     bool cameraLock = false;
 
     //User movement
-    public CharacterController characterController;
+    [Header("Movement")]
     public float movementSpeed = 1.0f;
+    Vector3 userMoveDirection;//Used to calculate and set user move direction
 
+    //User grafity and jumping
     public bool grafityEnabled = true;
     public float grafityValue = 9.81f;
+    public bool useJumpInput = false;
+    public float jumpHeight = 1.0f;
 
     float fallVelocity = 0f; //Used to calculate the users fall speed
 
     //Adjust user move speed
-    [Tooltip("Button used to toggle user move speed modifier on off, can be disabled by leaving it empty, the defaul value revers to Left Shift and Mouse Wheel Button when using keyboard and mouse (with the default input manager settings)")]
-    public string increaseSpeedButton = "Fire3";
     public List<float> moveSpeedModifiers = new List<float> { 1f, 0.5f, 2f };
     int moveSpeedModifierIndex = 0;
     float currentMoveSpeedModifier;
 
     //Automatic movement
+    [Header("Automatic Movement")]
     [Tooltip("Move user automatically (note: cannot be changed after starting the program)?")]
+    [HideInInspector]
     public bool automaticMovement = false;
     bool autoMove;
     private void Awake()
@@ -68,69 +83,82 @@ public class UserHandler : MonoBehaviour
     void Update()
     {
         //Camera
-        float t_mouseV = Input.GetAxis("Mouse Y");
-        float t_mouseH = Input.GetAxis("Mouse X");
-
-        CameraRotation(t_mouseV, t_mouseH);
+        CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput), Input.GetButtonDown(lockCameraInput));
 
         //Movement
         if (!autoMove)
         {
-            float t_KeyV = Input.GetAxis("Vertical");
-            float t_KeyH = Input.GetAxis("Horizontal");
-            
-            UserMovement(t_KeyV, t_KeyH);
+            //Move user
+            UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
         }        
     }
 
     //Camera
-    void CameraRotation(float p_mouseV, float p_mouseH)
+    void CameraRotation(float p_vertCameraInput, float p_horizCameraInput, bool p_lockCameraInput)
     {
         if (!cameraLock)
         {
-            cameraRotation.x -= p_mouseV * cameraSpeed;
-            cameraRotation.y += p_mouseH * cameraSpeed;
+            cameraRotation.x -= p_vertCameraInput * cameraSpeed;
+            cameraRotation.y += p_horizCameraInput * cameraSpeed;
 
             //Limit vertical rotation angle
-            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -cameraMaxVerRot, cameraMaxVerRot);
+            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -cameraMaxVerticalRotation, cameraMaxVerticalRotation);
 
             //Apply rotation
             cameraTransform.eulerAngles = cameraRotation;
         }
 
         //Toggle camera lock
-        if (Input.GetButtonDown(lockCameraButton))
+        if (p_lockCameraInput)
             cameraLock = !cameraLock;
-
     }
 
     //Movement
-    void UserMovement(float p_keyV, float p_keyH)
+    void UserMovement(float p_vertMovInput, float p_horizMovInput, bool p_jumpOrTGrafInput, bool p_iSpeedInput)
     {
         //Set movement towards camera direction
-        Vector3 t_move = cameraTransform.right * p_keyH + cameraTransform.forward * p_keyV;
+        userMoveDirection = cameraTransform.right * p_horizMovInput + cameraTransform.forward * p_vertMovInput;
 
         //Prefent faster diagonal movement
-        if (t_move.sqrMagnitude > 1)
-            t_move.Normalize();
+        if (userMoveDirection.sqrMagnitude > 1)
+            userMoveDirection.Normalize();
 
+
+        //Grafity and jumping
         if (grafityEnabled)
         {
-
             //Reset velocity
             if (characterController.isGrounded && fallVelocity < 0f)
                 fallVelocity = 0f;
+
+            //Jump or toggle grafity
+            if (p_jumpOrTGrafInput)
+            {
+                if (useJumpInput)
+                {
+                    if (characterController.isGrounded)
+                    {
+                        fallVelocity += Mathf.Sqrt(jumpHeight * 3.0f * grafityValue);
+                        Debug.Log("Jump");
+                    }
+                }
+            }
+
+            //Limit max velocity???
 
             //Increase velocity
             fallVelocity += -grafityValue;
 
             //Add grafity
-            t_move.y = fallVelocity;
-
+            userMoveDirection.y = fallVelocity*Time.deltaTime;
         }
 
+        //Toggle grafity if jumping isin't enabled
+        if (!useJumpInput && p_jumpOrTGrafInput)
+            grafityEnabled = !grafityEnabled;
+
         //Adjust user speed
-        if (Input.GetButtonDown(increaseSpeedButton))
+        if (p_iSpeedInput)
         {
             if (moveSpeedModifierIndex < moveSpeedModifiers.Count - 1)
                 moveSpeedModifierIndex++;
@@ -141,6 +169,6 @@ public class UserHandler : MonoBehaviour
         currentMoveSpeedModifier = moveSpeedModifiers[moveSpeedModifierIndex];
 
         //Move user
-        characterController.Move(t_move * movementSpeed * currentMoveSpeedModifier * Time.deltaTime);
+        characterController.Move(userMoveDirection * movementSpeed * currentMoveSpeedModifier * Time.deltaTime);
     }
 }
