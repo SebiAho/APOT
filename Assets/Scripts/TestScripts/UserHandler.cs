@@ -49,9 +49,8 @@ public class UserHandler : MonoBehaviour
     //Automatic movement
     [Header("Automatic Movement")]
     [Tooltip("Move user automatically (note: cannot be changed after starting the program)?")]
-    [HideInInspector]
     public bool automaticMovement = false;
-    bool autoMove;
+    public AutomaticMovementHandler autoMoveHandler;
 
     private void Awake()
     {
@@ -62,12 +61,15 @@ public class UserHandler : MonoBehaviour
         cameraRotation = new Vector3(cameraTransform.rotation.x, cameraTransform.rotation.y, 0);
 
         //Movement
-        autoMove = automaticMovement;
-
-        if (!autoMove)
+        if (!autoMoveHandler)
         {
             if (characterController == null)
                 characterController = GetComponent<CharacterController>();
+        }
+        else
+        {
+            if (autoMoveHandler == null)
+                autoMoveHandler = GetComponent<AutomaticMovementHandler>();
         }
 
         //Ensure moveSpeedModifiers list isn't empty
@@ -88,11 +90,15 @@ public class UserHandler : MonoBehaviour
         CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput), Input.GetButtonDown(lockCameraInput));
 
         //Movement
-        if (!autoMove)
+        if (!automaticMovement)
         {
             //Move user
             UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
-        }        
+        }
+        else
+        {
+
+        }
     }
 
     //Camera
