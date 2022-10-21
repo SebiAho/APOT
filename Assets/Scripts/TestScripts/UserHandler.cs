@@ -39,6 +39,7 @@ public class UserHandler : MonoBehaviour
     public float jumpHeight = 1.0f;
 
     float fallVelocity = 0f; //Used to calculate the users fall speed
+    float groundedTimer;//Used to make checking if character is grounded more reliable
 
     //Adjust user move speed
     public List<float> moveSpeedModifiers = new List<float> { 1f, 0.5f, 2f };
@@ -51,6 +52,7 @@ public class UserHandler : MonoBehaviour
     [HideInInspector]
     public bool automaticMovement = false;
     bool autoMove;
+
     private void Awake()
     {
         //Camera
@@ -127,30 +129,20 @@ public class UserHandler : MonoBehaviour
         //Grafity and jumping
         if (grafityEnabled)
         {
-            //Reset velocity
-            if (characterController.isGrounded && fallVelocity < 0f)
-                fallVelocity = 0f;
+            ApplyGrafity();
 
             //Jump or toggle grafity
-            if (p_jumpOrTGrafInput)
+            if (p_jumpOrTGrafInput && useJumpInput && groundedTimer > 0)
             {
-                if (useJumpInput)
-                {
-                    if (characterController.isGrounded)
-                    {
-                        fallVelocity += Mathf.Sqrt(jumpHeight * 3.0f * grafityValue);
-                        Debug.Log("Jump");
-                    }
-                }
+                //Reset grounded timer
+                groundedTimer = 0f;
+
+                //Add jump velocity
+                fallVelocity += Mathf.Sqrt(jumpHeight * 2.0f * grafityValue);
             }
 
-            //Limit max velocity???
-
-            //Increase velocity
-            fallVelocity += -grafityValue;
-
             //Add grafity
-            userMoveDirection.y = fallVelocity*Time.deltaTime;
+            userMoveDirection.y = fallVelocity;
         }
 
         //Toggle grafity if jumping isin't enabled
@@ -170,5 +162,22 @@ public class UserHandler : MonoBehaviour
 
         //Move user
         characterController.Move(userMoveDirection * movementSpeed * currentMoveSpeedModifier * Time.deltaTime);
+    }
+
+    void ApplyGrafity()
+    {
+        //Is player grounded(should be more reliaple than simply calling the CharacterController's isGrounded variable)?
+        if (characterController.isGrounded)
+            groundedTimer = 0.2f;
+
+        if (groundedTimer > 0)
+            groundedTimer -= Time.deltaTime;
+
+        //Reset velocity when hitting ground
+        if(characterController.isGrounded && fallVelocity < 0)
+            fallVelocity = 0f;
+
+        //Add grafity
+        fallVelocity -= grafityValue * Time.deltaTime;
     }
 }
