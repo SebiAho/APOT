@@ -168,7 +168,7 @@ MonoBehaviour:
   grafityEnabled: 1
   grafityValue: 9.81
   useJumpInput: 1
-  jumpHeight: 1
+  jumpHeight: 0.5
   moveSpeedModifiers:
   - 1
   - 0.5
