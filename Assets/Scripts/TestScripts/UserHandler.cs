@@ -22,6 +22,7 @@ public class UserHandler : MonoBehaviour
 
     //Camera
     [Header("Camera")]
+    public bool useCamera = true;
     public float cameraSpeed = 5.0f;
     public float cameraMaxVerticalRotation = 90f;
     Vector3 cameraRotation;//Used to calculate the camera rotation before adding it to the actual camera position
@@ -48,30 +49,29 @@ public class UserHandler : MonoBehaviour
 
     //Automatic movement
     [Header("Automatic Movement")]
-    [Tooltip("Move user automatically (note: cannot be changed after starting the program)?")]
+    [Tooltip("Move user automatically, move speed will be UserHandler.movementSpeed * autoMoveHandler.movementSpeed (note: cannot be changed after starting the program)?")]
     public bool automaticMovement = false;
     public AutomaticMovementHandler autoMoveHandler;
 
     private void Awake()
     {
-        //Camera
+        //Get components
         if (cameraTransform == null)
             cameraTransform = GetComponent<Transform>();
 
-        cameraRotation = new Vector3(cameraTransform.rotation.x, cameraTransform.rotation.y, 0);
+        if (characterController == null)
+            characterController = GetComponent<CharacterController>();
+
+        if (autoMoveHandler == null)
+            autoMoveHandler = GetComponent<AutomaticMovementHandler>();
+
+        //Camera
+        if (cameraTransform != null)
+            cameraRotation = new Vector3(cameraTransform.rotation.x, cameraTransform.rotation.y, 0);
+        else
+            useCamera = false;
 
         //Movement
-        if (!autoMoveHandler)
-        {
-            if (characterController == null)
-                characterController = GetComponent<CharacterController>();
-        }
-        else
-        {
-            if (autoMoveHandler == null)
-                autoMoveHandler = GetComponent<AutomaticMovementHandler>();
-        }
-
         //Ensure moveSpeedModifiers list isn't empty
         if (moveSpeedModifiers.Count <= 0)
             moveSpeedModifiers = new List<float> { 1 };
@@ -81,24 +81,29 @@ public class UserHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Automatic movement
+        if (autoMoveHandler != null)
+        {
+            autoMoveHandler.movementSpeed = autoMoveHandler.movementSpeed * movementSpeed;
+
+            if (automaticMovement == false)
+                autoMoveHandler.autoMoveEnabled = false;
+        }
+        else
+            automaticMovement = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         //Camera
-        CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput), Input.GetButtonDown(lockCameraInput));
+        if(useCamera)
+            CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput), Input.GetButtonDown(lockCameraInput));
 
         //Movement
         if (!automaticMovement)
-        {
-            //Move user
             UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
-        }
-        else
-        {
 
-        }
     }
 
     //Camera

@@ -12,12 +12,16 @@ public class AutomaticMovementPoint : MonoBehaviour
 
     [Tooltip("The distance where object moving toward this point is considered to be touching it")]
     public float touchRadius = 0.001f;
+    public bool useAsViewPoint = true;
+    public Transform viewDirection;
 
     private void Awake()
     {
         if (disableGraphics && GetComponent<MeshRenderer>() != null)
             GetComponent<MeshRenderer>().enabled = false;
 
+        if (useAsViewPoint)
+            viewDirection = transform;
     }
 
     // Start is called before the first frame update

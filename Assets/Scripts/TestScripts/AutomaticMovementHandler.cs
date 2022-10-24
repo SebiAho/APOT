@@ -10,57 +10,84 @@ public class AutomaticMovementHandler : MonoBehaviour
     public AutomaticMovementPoint currentMovePoint;
     public float movementSpeed = 1f;
 
+    [Tooltip("Apply rotation to object")]
+    public bool applyRotation = true;
+    [Tooltip("Use move direction set by move point, if move point does not have move point set, previous view direction will be used")]
+    public bool useMovePointViewDirection = true;
+    public Transform viewDirection;
+    public float rotationSpeed = 1f;
+    Quaternion lookRotation;
+    Vector3 direction;
+
     [Header("User auto movement")]
     [Tooltip("Does this AutomaticMovementHandler handle the movement of user")]
     public bool userMovementHandler = false;
     [Tooltip("Set view using camera movement provided by other classes")]
     public bool CustomView = true;
-    [Tooltip("Allow move points to set view direction")]
-    public Transform viewDirection;
 
     bool atMovePoint;
 
     private void Awake()
     {
-        if (currentMovePoint == null)
-            autoMoveEnabled = false;
+        if (!MovePointValid(ref currentMovePoint))
+            autoMoveEnabled = false; 
     }
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (applyRotation)
+        {
+            if (autoMoveEnabled && useMovePointViewDirection)
+                viewDirection = currentMovePoint.viewDirection;
+
+            if (viewDirection == null)
+                applyRotation = false;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!currentMovePoint.enabled)
+        //Movement
+        if(autoMoveEnabled)
         {
-           
+            //Set if object is or isn't at current move point
+            atMovePoint = Vector3.Distance(transform.position, currentMovePoint.transform.position) <= currentMovePoint.touchRadius;
+
+            if (!atMovePoint)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, currentMovePoint.transform.position, movementSpeed * Time.deltaTime);
+
+            }
+            else if (MovePointValid(ref currentMovePoint.nextMovePoint))
+            {
+                currentMovePoint = currentMovePoint.nextMovePoint;
+
+
+                if (applyRotation && useMovePointViewDirection && currentMovePoint.viewDirection != null)
+                    viewDirection = currentMovePoint.viewDirection;
+            }
+            else
+                autoMoveEnabled = false;
         }
 
-        //Set if object is or isn't at current move point
-        atMovePoint = Vector3.Distance(transform.position, currentMovePoint.transform.position) <= currentMovePoint.touchRadius;
+        //Rotation
+        if (applyRotation)
+        {
+            //Find vector pointing towards viewDirection
+            direction = (viewDirection.position - transform.position).normalized;
 
-        if (atMovePoint == false)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, currentMovePoint.transform.position, movementSpeed * Time.deltaTime);
-        }
-        else
-        {
-            currentMovePoint = currentMovePoint.nextMovePoint;
+            //Create rotation
+            lookRotation = Quaternion.LookRotation(direction);
+
+            //Rotate over time
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
         }
     }
 
-    void MoveTowardsMovePoint(ref AutomaticMovementPoint p_movePoint)
+    bool MovePointValid(ref AutomaticMovementPoint p_movePoint)
     {
-
-    }
-
-    //Is current move point valid 
-    bool MovePointValid()
-    {
-        if (currentMovePoint != null && currentMovePoint.enabled)
+        if (p_movePoint != null && p_movePoint.movePointEnabled)
             return true;
 
         return false;

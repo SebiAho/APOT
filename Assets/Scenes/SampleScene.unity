@@ -163,6 +163,7 @@ MonoBehaviour:
   jumpOrToggleGrafityInput: Jump
   lockCameraInput: Fire2
   increaseSpeedInput: Fire3
+  useCamera: 0
   cameraSpeed: 5
   cameraMaxVerticalRotation: 90
   movementSpeed: 25
@@ -225,10 +226,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoMoveEnabled: 1
   currentMovePoint: {fileID: 1436618087}
-  movementSpeed: 5
+  movementSpeed: 0.25
+  applyRotation: 1
+  useMovePointViewDirection: 0
+  viewDirection: {fileID: 539554499}
+  rotationSpeed: 2
   userMovementHandler: 1
   CustomView: 1
-  viewDirection: {fileID: 539554499}
 --- !u!1 &213239776
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,6 +269,8 @@ MonoBehaviour:
   disableGraphics: 1
   nextMovePoint: {fileID: 1306639972}
   touchRadius: 0.001
+  useAsViewPoint: 1
+  viewDirection: {fileID: 0}
 --- !u!135 &213239778
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1138,6 +1144,8 @@ MonoBehaviour:
   disableGraphics: 1
   nextMovePoint: {fileID: 1436618087}
   touchRadius: 0.001
+  useAsViewPoint: 1
+  viewDirection: {fileID: 0}
 --- !u!135 &1192886947
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1237,6 +1245,8 @@ MonoBehaviour:
   disableGraphics: 1
   nextMovePoint: {fileID: 1192886946}
   touchRadius: 0.001
+  useAsViewPoint: 1
+  viewDirection: {fileID: 0}
 --- !u!135 &1306639973
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1463,6 +1473,8 @@ MonoBehaviour:
   disableGraphics: 1
   nextMovePoint: {fileID: 213239777}
   touchRadius: 0.001
+  useAsViewPoint: 1
+  viewDirection: {fileID: 0}
 --- !u!135 &1436618088
 SphereCollider:
   m_ObjectHideFlags: 0
