@@ -49,7 +49,7 @@ public class UserHandler : MonoBehaviour
 
     //Automatic movement
     [Header("Automatic Movement")]
-    [Tooltip("Move user automatically, move speed will be UserHandler.movementSpeed * autoMoveHandler.movementSpeed (note: cannot be changed after starting the program)?")]
+    [Tooltip("Move user automatically, if true uses the values in AutomaticMovementHandler for move speed, camera can still be used to look around if enabled")]
     public bool automaticMovement = false;
     public AutomaticMovementHandler autoMoveHandler;
 

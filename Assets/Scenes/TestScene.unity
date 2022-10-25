@@ -175,7 +175,7 @@ MonoBehaviour:
   - 1
   - 0.5
   - 2
-  automaticMovement: 1
+  automaticMovement: 0
   autoMoveHandler: {fileID: 0}
 --- !u!143 &179478133
 CharacterController:
@@ -231,8 +231,6 @@ MonoBehaviour:
   useMovePointViewDirection: 0
   viewDirection: {fileID: 539554499}
   rotationSpeed: 2
-  userMovementHandler: 1
-  CustomView: 1
 --- !u!1 &213239776
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,7 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movePointEnabled: 1
-  disableGraphics: 1
+  disableMovePointGraphics: 1
   nextMovePoint: {fileID: 1306639972}
   touchRadius: 0.001
   useAsViewPoint: 1
@@ -1141,8 +1139,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movePointEnabled: 1
-  disableGraphics: 1
-  nextMovePoint: {fileID: 1436618087}
+  disableMovePointGraphics: 1
+  nextMovePoint: {fileID: 0}
   touchRadius: 0.001
   useAsViewPoint: 1
   viewDirection: {fileID: 0}
@@ -1242,7 +1240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movePointEnabled: 1
-  disableGraphics: 1
+  disableMovePointGraphics: 1
   nextMovePoint: {fileID: 1192886946}
   touchRadius: 0.001
   useAsViewPoint: 1
@@ -1470,7 +1468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movePointEnabled: 1
-  disableGraphics: 1
+  disableMovePointGraphics: 1
   nextMovePoint: {fileID: 213239777}
   touchRadius: 0.001
   useAsViewPoint: 1
