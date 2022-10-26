@@ -84,10 +84,18 @@ public class UserHandler : MonoBehaviour
         //Automatic movement
         if (autoMoveHandler != null)
         {
-            autoMoveHandler.movementSpeed = autoMoveHandler.movementSpeed * movementSpeed;
-
-            if (automaticMovement == false)
+            if (!automaticMovement)
+            {
                 autoMoveHandler.autoMoveEnabled = false;
+                if (useCamera)
+                    autoMoveHandler.applyRotation = false;
+            }
+            else
+            {
+                autoMoveHandler.autoMoveEnabled = true;
+                if (autoMoveHandler.applyRotation)
+                    useCamera = false;
+            }
         }
         else
             automaticMovement = false;
