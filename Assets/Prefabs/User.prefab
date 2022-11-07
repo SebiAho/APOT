@@ -455,7 +455,7 @@ MonoBehaviour:
   lockCameraInput: Fire2
   increaseSpeedInput: Fire3
   useCamera: 1
-  cameraSpeed: 5
+  cameraSpeed: 6
   cameraMaxVerticalRotation: 90
   movementSpeed: 25
   grafityEnabled: 1
@@ -466,7 +466,7 @@ MonoBehaviour:
   - 1
   - 0.5
   - 2
-  automaticMovement: 1
+  automaticMovement: 0
   autoMoveHandler: {fileID: 0}
 --- !u!114 &5923236293390717495
 MonoBehaviour:
