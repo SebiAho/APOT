@@ -15,8 +15,8 @@ public class UserHandler : MonoBehaviour
     [Tooltip("Button that is used to either jump or toggle grafity, depending on the setting")]
     public string jumpOrToggleGrafityInput = "Jump";
     
-    [Tooltip("Button used to toggle camera movement lock on/off, the defaul value revers to Left Alt and Right Mouse Button when using keyboard and mouse (with the default input manager settings)")]
-    public string lockCameraInput = "Fire2";
+    [Tooltip("Button used to pause/unpause the program, the defaul value revers to Left Alt and Right Mouse Button when using keyboard and mouse (with the default input manager settings)")]
+    public string pauseInput = "Fire2";
     [Tooltip("Button used to toggle user move speed modifier on off, the defaul value revers to Left Shift and Mouse Wheel Button when using keyboard and mouse (with the default input manager settings)")]
     public string increaseSpeedInput = "Fire3";
 
@@ -52,6 +52,9 @@ public class UserHandler : MonoBehaviour
     [Tooltip("Move user automatically, if true uses the values in AutomaticMovementHandler for move speed, camera can still be used to look around if enabled")]
     public bool automaticMovement = false;
     public AutomaticMovementHandler autoMoveHandler;
+
+    //Pause
+    public static bool programPaused = false;
 
     private void Awake()
     {
@@ -106,18 +109,20 @@ public class UserHandler : MonoBehaviour
     {
         //Camera
         if(useCamera)
-            CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput), Input.GetButtonDown(lockCameraInput));
+            CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput));
 
         //Movement
         if (!automaticMovement)
             UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
 
+        //Pause
+        PauseProgram(Input.GetButtonDown(pauseInput));
     }
 
     //Camera
-    void CameraRotation(float p_vertCameraInput, float p_horizCameraInput, bool p_lockCameraInput)
+    void CameraRotation(float p_vertCameraInput, float p_horizCameraInput)
     {
-        if (!cameraLock)
+        if (!programPaused)
         {
             cameraRotation.x -= p_vertCameraInput * cameraSpeed;
             cameraRotation.y += p_horizCameraInput * cameraSpeed;
@@ -128,10 +133,6 @@ public class UserHandler : MonoBehaviour
             //Apply rotation
             cameraTransform.eulerAngles = cameraRotation;
         }
-
-        //Toggle camera lock
-        if (p_lockCameraInput)
-            cameraLock = !cameraLock;
     }
 
     //Movement
@@ -198,5 +199,19 @@ public class UserHandler : MonoBehaviour
 
         //Add grafity
         fallVelocity -= grafityValue * Time.deltaTime;
+    }
+
+    void PauseProgram(bool p_pauseInput)
+    {
+        if (p_pauseInput && !programPaused)
+        {
+            Time.timeScale = 0f;
+            programPaused = true;
+        }
+        else if (p_pauseInput && programPaused)
+        {
+            Time.timeScale = 1f;
+            programPaused = false;
+        }
     }
 }
