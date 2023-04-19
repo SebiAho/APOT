@@ -6,6 +6,7 @@ public class UserHandler : MonoBehaviour
 {
     public Transform cameraTransform;
     public CharacterController characterController;
+    public GameObject pauseMenu;
 
     [Header("Input")]
     public string verticalCameraInput = "Mouse Y";
@@ -107,13 +108,16 @@ public class UserHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Camera
-        if(useCamera)
-            CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput));
+        if (!programPaused)
+        {
+            //Camera
+            if (useCamera)
+                CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput));
 
-        //Movement
-        if (!automaticMovement)
-            UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
+            //Movement
+            if (!automaticMovement)
+                UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
+        }
 
         //Pause
         PauseProgram(Input.GetButtonDown(pauseInput));
@@ -122,17 +126,15 @@ public class UserHandler : MonoBehaviour
     //Camera
     void CameraRotation(float p_vertCameraInput, float p_horizCameraInput)
     {
-        if (!programPaused)
-        {
-            cameraRotation.x -= p_vertCameraInput * cameraSpeed;
-            cameraRotation.y += p_horizCameraInput * cameraSpeed;
+        cameraRotation.x -= p_vertCameraInput * cameraSpeed;
+        cameraRotation.y += p_horizCameraInput * cameraSpeed;
 
-            //Limit vertical rotation angle
-            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -cameraMaxVerticalRotation, cameraMaxVerticalRotation);
+        //Limit vertical rotation angle
+        cameraRotation.x = Mathf.Clamp(cameraRotation.x, -cameraMaxVerticalRotation, cameraMaxVerticalRotation);
 
-            //Apply rotation
-            cameraTransform.eulerAngles = cameraRotation;
-        }
+        //Apply rotation
+        cameraTransform.eulerAngles = cameraRotation;
+
     }
 
     //Movement
@@ -207,11 +209,15 @@ public class UserHandler : MonoBehaviour
         {
             Time.timeScale = 0f;
             programPaused = true;
+            if (pauseMenu != null)
+                pauseMenu.SetActive(true);
         }
         else if (p_pauseInput && programPaused)
         {
             Time.timeScale = 1f;
             programPaused = false;
+            if (pauseMenu != null)
+                pauseMenu.SetActive(false);
         }
     }
 }
