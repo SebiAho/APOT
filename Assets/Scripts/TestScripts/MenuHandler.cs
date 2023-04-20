@@ -21,7 +21,7 @@ public class MenuHandler : MonoBehaviour
     }
 
     //Change menu
-    public void ChangeMenu(GameObject p_menu)
+    public void ButtonChangeMenu(GameObject p_menu)
     {
         p_menu.SetActive(true);
 
@@ -29,14 +29,22 @@ public class MenuHandler : MonoBehaviour
         currentMenu = p_menu;
     }
 
-    public void LoadScene(int p_index)
+    public void ButtonLoadScene(int p_index)
     {
         SceneManager.LoadScene(p_index);
     }
 
-    public void LoadScene(string p_sceneName)
+    public void ButtonLoadScene(string p_sceneName)
     {
         SceneManager.LoadScene(p_sceneName);
     }
 
+    //Set object inactive if it is active and active if it isin't
+    public void ButtonActiveObject(GameObject p_object)
+    {
+        if (p_object.activeSelf)
+            p_object.SetActive(false);
+        else
+            p_object.SetActive(true);
+    }
 }

@@ -507,7 +507,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 853938108}
         m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
-        m_MethodName: ChangeMenu
+        m_MethodName: ButtonChangeMenu
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 180639348}
@@ -1540,7 +1540,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 853938108}
         m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
-        m_MethodName: ChangeMenu
+        m_MethodName: ButtonChangeMenu
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 561995150}
@@ -1674,7 +1674,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 853938108}
         m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
-        m_MethodName: LoadScene
+        m_MethodName: ButtonLoadScene
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1686,7 +1686,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 853938108}
         m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
-        m_MethodName: ChangeMenu
+        m_MethodName: ButtonChangeMenu
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1083306563}
@@ -1955,7 +1955,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 853938108}
         m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
-        m_MethodName: LoadScene
+        m_MethodName: ButtonLoadScene
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1967,7 +1967,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 853938108}
         m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
-        m_MethodName: ChangeMenu
+        m_MethodName: ButtonChangeMenu
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1083306563}
