@@ -27,7 +27,7 @@ public class UserHandler : MonoBehaviour
     public float cameraSpeed = 5.0f;
     public float cameraMaxVerticalRotation = 90f;
     Vector3 cameraRotation;//Used to calculate the camera rotation before adding it to the actual camera position
-    bool cameraLock = false;
+    //bool cameraLock = false;
 
     //User movement
     [Header("Movement")]
