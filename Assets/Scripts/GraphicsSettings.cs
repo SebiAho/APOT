@@ -1,32 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 [System.Serializable]
 public struct SettingValues
 {
     public string presetName;
     public bool fullScreen;
-    public int vSynch;
+    public int vSynch;//values 0-4
     public int resolutionIndex;
 
-    public int textureQuality;
-    public int antialiazingMethod;
-    public int antialiazingQuality;
-    public int shadowQuality;
+    public int textureQuality;//values 0-3
+    public int aaMethod;//values 0-2
+    public int aaQuality; //values 0-2
+    public int shadowQuality; //values 0-2
     public int shadowDistance;
 }
 public class GraphicsSettings : MonoBehaviour
 {
+    public UniversalAdditionalCameraData mainCamera;
+    public List<UniversalRenderPipelineAsset> urpAssets = new List<UniversalRenderPipelineAsset>();
+    UniversalRenderPipelineAsset mainAsset;
+
     public SettingValues settingValues;
     public Resolution[] resolutions;
     public List<SettingValues> presets = new List<SettingValues>();
 
     [Tooltip("If needed for debugging purposes disable to stop the initialization of unity settings using the values stored in the settingValues variable")]
     bool debuggingInitSettings = true;
-
     private void Awake()
     {
+        //Set assets
+        mainAsset = urpAssets[0];
+        QualitySettings.renderPipeline = mainAsset;
+
         //Resolution
         resolutions = Screen.resolutions;
 
@@ -52,6 +60,11 @@ public class GraphicsSettings : MonoBehaviour
         SetFullscreen(settingValues.fullScreen);
         SetVsynch(settingValues.vSynch);
         SetResolution(settingValues.resolutionIndex);
+
+        SetAntialiazingMethod(settingValues.aaMethod);
+        SetAntialiazingQuality(settingValues.aaQuality);
+        SetShadowQuality(settingValues.shadowQuality);
+        SetShadowDistance(settingValues.shadowDistance);
     }
 
     //Add new values ti the settingValues variable and use them to change the program setting values 
@@ -90,5 +103,46 @@ public class GraphicsSettings : MonoBehaviour
             QualitySettings.masterTextureLimit = 3;
         else
             QualitySettings.masterTextureLimit = p_quality;
+    }
+
+    public void SetAntialiazingMethod(int p_method)
+    {
+        if (p_method == 0)
+            mainCamera.antialiasing = AntialiasingMode.None;
+        else if (p_method == 1)
+            mainCamera.antialiasing = AntialiasingMode.FastApproximateAntialiasing;
+        else
+            mainCamera.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
+    }
+
+    public void SetAntialiazingQuality(int p_quality)
+    {
+        if (p_quality == 0)
+            mainCamera.antialiasingQuality = AntialiasingQuality.Low;
+        else if (p_quality == 1)
+            mainCamera.antialiasingQuality = AntialiasingQuality.Medium;
+        else
+            mainCamera.antialiasingQuality = AntialiasingQuality.High;
+    }
+
+    public void SetShadowQuality(int p_quality)
+    {
+        if(p_quality == 0)//None
+            mainAsset = urpAssets[0];
+        else if(p_quality == 1)//Low
+            mainAsset = urpAssets[1];
+        else if(p_quality == 2)//Medium
+            mainAsset = urpAssets[2];
+        else//High
+            mainAsset = urpAssets[3];
+
+        //Set asset specific values
+        mainAsset.shadowDistance = settingValues.shadowDistance;
+        QualitySettings.renderPipeline = mainAsset;
+    }
+
+    public void SetShadowDistance(float p_distance)
+    {
+        mainAsset.shadowDistance = p_distance;
     }
 }

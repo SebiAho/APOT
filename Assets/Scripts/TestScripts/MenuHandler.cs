@@ -37,9 +37,6 @@ public class MenuHandler : MonoBehaviour
         //Graphics settings
         if (graphics != null)
         {
-            fullscreen.isOn = graphics.settingValues.fullScreen;
-            vSynch.value = graphics.settingValues.vSynch;
-
             //Add resolution options and set the current resolution index
             List<string> t_resOptions = new List<string>();
 
@@ -50,7 +47,6 @@ public class MenuHandler : MonoBehaviour
                 t_resOptions.Add(t_resOption);
             }
             resolution.AddOptions(t_resOptions);
-            resolution.value = graphics.settingValues.resolutionIndex;
             resolution.RefreshShownValue();
 
             //Texture Quality (Options are Full Res, Half Res, Quarter Res and Eighth Res)
@@ -58,30 +54,26 @@ public class MenuHandler : MonoBehaviour
             //As it only affects textures with multiple mip maps iit results might vary)
             textureQuality.options.Clear();
             textureQuality.AddOptions(new List<string> { "Low", "Medium", "High", "Very High" });
-            textureQuality.value = 3 - graphics.settingValues.textureQuality;
             textureQuality.RefreshShownValue();
 
             //Anti-Aliazing Method
             antialiazingMethod.options.Clear();
             antialiazingMethod.AddOptions(new List<string> { "None", "FSAA", "SMAA" });
-            antialiazingMethod.value = graphics.settingValues.antialiazingMethod;
             antialiazingMethod.RefreshShownValue();
 
             //Anti-Aliazing Quality (only applies to SMAA)
             antialiazingQuality.options.Clear();
             antialiazingQuality.AddOptions(new List<string> { "Low", "Medium", "High" });
-            antialiazingQuality.value = graphics.settingValues.antialiazingQuality;
             antialiazingQuality.RefreshShownValue();
 
             //Shadow Quality
             //Anti-Aliazing Quality (only applies to SMAA)
             shadowQuality.options.Clear();
-            shadowQuality.AddOptions(new List<string> { "Low", "Medium", "High" });
-            shadowQuality.value = graphics.settingValues.shadowQuality;
+            shadowQuality.AddOptions(new List<string> {"None", "Low", "Medium", "High" });
             shadowQuality.RefreshShownValue();
 
-            //Shadow Distance
-            shadowDistance.value = graphics.settingValues.shadowDistance;
+            //Set graphics setting values
+            SetGraphicSettingsValues(graphics.settingValues);
 
             //Presets
             presets.options.Clear();
@@ -89,7 +81,7 @@ public class MenuHandler : MonoBehaviour
             for (int i = 0; i < graphics.presets.Count; i++)
                 t_presetNames.Add(graphics.presets[i].presetName);
             presets.AddOptions(t_presetNames);
-
+            presets.RefreshShownValue();
         }
     }
 
@@ -132,4 +124,65 @@ public class MenuHandler : MonoBehaviour
     }
 
     //Graphics Settings
+    void SetGraphicSettingsValues(SettingValues p_settings)
+    {
+        if (graphics != null)
+        {
+            fullscreen.isOn = p_settings.fullScreen;
+            vSynch.value = p_settings.vSynch;
+            resolution.value = p_settings.resolutionIndex;
+
+            textureQuality.value = 3 - p_settings.textureQuality;
+            antialiazingMethod.value = (int)p_settings.aaMethod;
+            antialiazingQuality.value = (int)p_settings.aaQuality;
+            shadowQuality.value = p_settings.shadowQuality;
+            shadowDistance.value = p_settings.shadowDistance;
+        }
+    }
+
+    public void ButtonSetFullScreen()
+    {
+        graphics.SetFullscreen(fullscreen.isOn);
+    }
+
+    public void ButtonSetVSynch()
+    {
+        graphics.SetVsynch((int)vSynch.value);
+    }
+
+    public void ButtonSetResolution()
+    {
+        graphics.SetResolution(resolution.value);
+    }
+
+    public void ButtonSetTextureQuality()
+    {
+        graphics.SetTextureQuality(textureQuality.value);
+    }
+
+    public void ButtonSetAAMethod()
+    {
+        graphics.SetAntialiazingMethod(antialiazingMethod.value);
+    }
+
+    public void ButtonSetAAQuality()
+    {
+        graphics.SetAntialiazingQuality(antialiazingQuality.value);
+    }
+
+    public void ButtonSetShadowQuality()
+    {
+        graphics.SetShadowQuality(shadowQuality.value);
+    }
+
+    public void ButtonSetShadowDistance()
+    {
+        graphics.SetShadowDistance(shadowDistance.value);
+    }
+
+    public void ButtonSetPreset()
+    {
+
+    }
+
 }
