@@ -339,6 +339,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentMenu: {fileID: 2075842357861792299}
+  graphics: {fileID: 0}
+  fullscreen: {fileID: 0}
+  vSynch: {fileID: 0}
+  vSynchSliderText: {fileID: 0}
+  resolution: {fileID: 0}
+  textureQuality: {fileID: 0}
+  antialiazingMethod: {fileID: 0}
+  antialiazingQuality: {fileID: 0}
+  shadowQuality: {fileID: 0}
+  shadowDistance: {fileID: 0}
+  shadowDistSliderText: {fileID: 0}
+  presets: {fileID: 0}
 --- !u!1 &2075842357861792299
 GameObject:
   m_ObjectHideFlags: 0
@@ -1088,7 +1100,6 @@ MonoBehaviour:
     highestFrameRate: 0
     lowestAverageFrameRate: 0
     highestAverageFrameRate: 0
-    GraphicsMemoryAmount: 0
 --- !u!1 &5923236292933692841
 GameObject:
   m_ObjectHideFlags: 0
@@ -1166,10 +1177,6 @@ MonoBehaviour:
     0
 
     0
-
-    0
-
-
 
     0'
   m_isRightToLeft: 0
@@ -1294,7 +1301,6 @@ MonoBehaviour:
     highestFrameRate: 0
     lowestAverageFrameRate: 0
     highestAverageFrameRate: 0
-    GraphicsMemoryAmount: 0
 --- !u!1 &5923236293273688455
 GameObject:
   m_ObjectHideFlags: 0
@@ -1602,13 +1608,7 @@ MonoBehaviour:
 
     Lowest Average FPS:
 
-    Highest Average FPS:
-
-
-    Graphics Memory
-
-    VRAM
-    Size:'
+    Highest Average FPS:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

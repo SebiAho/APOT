@@ -46,7 +46,6 @@ public class PerformanceDataDisplay : MonoBehaviour
             data.lowestFrameRate.ToString() + "\n" +
             data.highestFrameRate.ToString() + "\n" +
             data.lowestAverageFrameRate.ToString() + "\n" +
-            data.highestAverageFrameRate.ToString() +"\n \n \n"+
-            data.GraphicsMemoryAmount.ToString();
+            data.highestAverageFrameRate.ToString();
     }
 }

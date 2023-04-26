@@ -13,9 +13,6 @@ public class PerformanceDataContainer
     public float highestFrameRate;
     public float lowestAverageFrameRate;
     public float highestAverageFrameRate;
-
-    [Header("Graphics Memory Data")]
-    public int GraphicsMemoryAmount;
 }
 
 public class PerformanceDataTracker : MonoBehaviour
@@ -61,8 +58,6 @@ public class PerformanceDataTracker : MonoBehaviour
             data.currentFrameRate = trackFPS();
             data.averageFrameRate = CalculateAverageFPS();
             HighestAndLowestFrameRateValues();
-            //Graphics
-            data.GraphicsMemoryAmount = SystemInfo.graphicsMemorySize;
         }
         else
         {

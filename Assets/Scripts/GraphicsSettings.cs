@@ -4,18 +4,93 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 [System.Serializable]
+public struct SValue
+{
+    //Note: might be more practical to replace with a template class
+    public SValue (int p_value, string p_id, bool p_use = true, int p_pImpact = 0, int p_gImpact = 0)
+    {
+        id = p_id;
+
+        valueType = 0;
+        ivalue = p_value;
+        fvalue = 0;
+        bvalue = false;
+
+        use = p_use;
+        pImpact = p_pImpact;
+        gImpact = p_gImpact;
+    }
+    public SValue(float p_value, string p_id, bool p_use = true, int p_pImpact = 0, int p_gImpact = 0)
+    {
+        id = p_id;
+
+        valueType = 1;
+        ivalue = 0;
+        fvalue = p_value;
+        bvalue = false;
+
+        use = p_use;
+        pImpact = p_pImpact;
+        gImpact = p_gImpact;
+    }
+    public SValue(bool p_value, string p_id, bool p_use = true, int p_pImpact = 0, int p_gImpact = 0)
+    {
+        id = p_id;
+
+        valueType = 2;
+        ivalue = 0;
+        fvalue = 0;
+        bvalue = p_value;
+
+        use = p_use;
+        pImpact = p_pImpact;
+        gImpact = p_gImpact;
+    }
+
+    public string id;
+
+    //Values
+    [Tooltip("type of the value, 0 = int, 1 = float, 2 = bool")]
+    public int valueType;
+    public int ivalue;
+    public float fvalue;
+    public bool bvalue;
+
+    //Priorities
+    [Tooltip("Use this setting in calculations")]
+    public bool use;
+    [Tooltip("The perfromance impact of the setting")]
+    public int pImpact;
+    [Tooltip("The graphical impact of the setting")]
+    public int gImpact;
+}
+
+[System.Serializable]
 public struct SettingValues
 {
-    public string presetName;
-    public bool fullScreen;
-    public int vSynch;//values 0-4
-    public int resolutionIndex;
+    public SettingValues(string p_name, bool p_fscreen, int p_vsynch, int p_res, int p_textQual, int p_aaMethod, int p_aaQual, int p_shadowQual, int p_shadowDist)
+    {
+        presetName = p_name;
+        fullScreen = new SValue(p_fscreen, "fullscreen");
+        vSynch = new SValue(p_vsynch, "vSynch");
+        resolutionIndex = new SValue(p_res, "resIndex");
+        textureQuality = new SValue(p_textQual, "textQual");
+        aaMethod = new SValue(p_aaMethod, "aaMethod");
+        aaQuality = new SValue(p_aaQual, "aaQual");
+        shadowQuality = new SValue(p_shadowQual, "sQual");
+        shadowDistance = new SValue(p_shadowDist, "sDist");
+    }
 
-    public int textureQuality;//values 0-3
-    public int aaMethod;//values 0-2
-    public int aaQuality; //values 0-2
-    public int shadowQuality; //values 0-2
-    public int shadowDistance;
+    public string presetName;
+    public SValue fullScreen;
+    public SValue vSynch;//values 0-4
+    public SValue resolutionIndex;
+
+    public SValue textureQuality;//values 0-3
+    public SValue aaMethod;//values 0-2
+    public SValue aaQuality; //values 0-2
+    public SValue shadowQuality; //values 0-2
+    public SValue shadowDistance;
 }
 public class GraphicsSettings : MonoBehaviour
 {
@@ -28,7 +103,8 @@ public class GraphicsSettings : MonoBehaviour
     public List<SettingValues> presets = new List<SettingValues>();
 
     [Tooltip("If needed for debugging purposes disable to stop the initialization of unity settings using the values stored in the settingValues variable")]
-    bool debuggingInitSettings = true;
+    public bool debuggingInitSettings = true;
+
     private void Awake()
     {
         //Set assets
@@ -38,8 +114,15 @@ public class GraphicsSettings : MonoBehaviour
         //Resolution
         resolutions = Screen.resolutions;
 
+        //Presets
+        presets.Add(new SettingValues("Very Low", false, 0, 0, 0, 0, 0, 0, 0));
+        presets.Add(new SettingValues("Low", false, 1, 1, 1, 1, 0, 1, 50));
+        presets.Add(new SettingValues("Medium", false, 2, 2, 2, 1, 0, 1, 100));
+        presets.Add(new SettingValues("High", false, 3, 3, 3, 2, 1, 2, 250));
+        presets.Add(new SettingValues("Very High", false, 4, 4, 3, 2, 2, 2, 500));
+
         if (debuggingInitSettings)
-            ChangeSettingValues();
+            ChangeSettingValues(presets[3]);
     }
 
     // Start is called before the first frame update
@@ -57,18 +140,18 @@ public class GraphicsSettings : MonoBehaviour
     //Change the program setting values to the ones stored in the settingValues variable;
     void ChangeSettingValues()
     {
-        SetFullscreen(settingValues.fullScreen);
-        SetVsynch(settingValues.vSynch);
-        SetResolution(settingValues.resolutionIndex);
+        SetFullscreen(settingValues.fullScreen.bvalue);
+        SetVsynch(settingValues.vSynch.ivalue);
+        SetResolution(settingValues.resolutionIndex.ivalue);
 
-        SetAntialiazingMethod(settingValues.aaMethod);
-        SetAntialiazingQuality(settingValues.aaQuality);
-        SetShadowQuality(settingValues.shadowQuality);
-        SetShadowDistance(settingValues.shadowDistance);
+        SetAntialiazingMethod(settingValues.aaMethod.ivalue);
+        SetAntialiazingQuality(settingValues.aaQuality.ivalue);
+        SetShadowQuality(settingValues.shadowQuality.ivalue);
+        SetShadowDistance(settingValues.shadowDistance.ivalue);
     }
 
     //Add new values ti the settingValues variable and use them to change the program setting values 
-    void ChangeSettingValues(ref SettingValues p_values)
+    public void ChangeSettingValues(SettingValues p_values)
     {
         settingValues = p_values;
         ChangeSettingValues();
@@ -91,18 +174,19 @@ public class GraphicsSettings : MonoBehaviour
     //Set a new resolution value to the game
     public void SetResolution(int p_index)
     {
-        if (settingValues.resolutionIndex > resolutions.Length)
-            settingValues.resolutionIndex = resolutions.Length - 1;
+        if (settingValues.resolutionIndex.ivalue > resolutions.Length)
+            settingValues.resolutionIndex.ivalue = resolutions.Length - 1;
 
         Screen.SetResolution(resolutions[p_index].width, resolutions[p_index].height, Screen.fullScreen);
     }
 
     public void SetTextureQuality(int p_quality)
     {
+        //Note that the values are reversed to keep them consistent with the other settings, because otherwise the higher values would result in lower quality
         if (p_quality > 3)
-            QualitySettings.masterTextureLimit = 3;
+            QualitySettings.masterTextureLimit = 0;
         else
-            QualitySettings.masterTextureLimit = p_quality;
+            QualitySettings.masterTextureLimit = 3 - p_quality;
     }
 
     public void SetAntialiazingMethod(int p_method)
@@ -137,7 +221,7 @@ public class GraphicsSettings : MonoBehaviour
             mainAsset = urpAssets[3];
 
         //Set asset specific values
-        mainAsset.shadowDistance = settingValues.shadowDistance;
+        mainAsset.shadowDistance = settingValues.shadowDistance.ivalue;
         QualitySettings.renderPipeline = mainAsset;
     }
 

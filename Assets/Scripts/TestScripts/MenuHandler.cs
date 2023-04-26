@@ -88,10 +88,13 @@ public class MenuHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (vSynchSliderText.gameObject.activeInHierarchy)
+        if (vSynchSliderText != null && shadowDistSliderText != null)
         {
-            vSynchSliderText.text = vSynch.value + "";
-            shadowDistSliderText.text = shadowDistance.value + "";
+            if (vSynchSliderText.gameObject.activeInHierarchy)
+            {
+                vSynchSliderText.text = vSynch.value + "";
+                shadowDistSliderText.text = shadowDistance.value + "";
+            }
         }
     }
 
@@ -128,15 +131,15 @@ public class MenuHandler : MonoBehaviour
     {
         if (graphics != null)
         {
-            fullscreen.isOn = p_settings.fullScreen;
-            vSynch.value = p_settings.vSynch;
-            resolution.value = p_settings.resolutionIndex;
+            fullscreen.isOn = p_settings.fullScreen.bvalue;
+            vSynch.value = p_settings.vSynch.ivalue;
+            resolution.value = p_settings.resolutionIndex.ivalue;
 
-            textureQuality.value = 3 - p_settings.textureQuality;
-            antialiazingMethod.value = (int)p_settings.aaMethod;
-            antialiazingQuality.value = (int)p_settings.aaQuality;
-            shadowQuality.value = p_settings.shadowQuality;
-            shadowDistance.value = p_settings.shadowDistance;
+            textureQuality.value = p_settings.textureQuality.ivalue;
+            antialiazingMethod.value = (int)p_settings.aaMethod.ivalue;
+            antialiazingQuality.value = (int)p_settings.aaQuality.ivalue;
+            shadowQuality.value = p_settings.shadowQuality.ivalue;
+            shadowDistance.value = p_settings.shadowDistance.ivalue;
         }
     }
 
@@ -182,7 +185,8 @@ public class MenuHandler : MonoBehaviour
 
     public void ButtonSetPreset()
     {
-
+        graphics.ChangeSettingValues(graphics.presets[presets.value]);
+        SetGraphicSettingsValues(graphics.settingValues);
     }
 
 }
