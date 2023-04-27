@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 [System.Serializable]
-public struct SValue
+public class SValue
 {
     //Note: might be more practical to replace with a template class
     public SValue (int p_value, string p_id, bool p_use = true, int p_pImpact = 0, int p_gImpact = 0)
@@ -59,14 +59,17 @@ public struct SValue
     //Priorities
     [Tooltip("Use this setting in calculations")]
     public bool use;
-    [Tooltip("The perfromance impact of the setting")]
+    [Tooltip("The perfromance impact of the setting, settings with higher values are MORE likely to be selected")]
     public int pImpact;
-    [Tooltip("The graphical impact of the setting")]
+    [Tooltip("The graphical impact of the setting, settings with higher values are LESS likely to be selected")]
     public int gImpact;
+
+    [Tooltip("Set in the PerfromanceOptimizationHandler, equals pImpact - gImpact")]
+    public int combinedImpact;
 }
 
 [System.Serializable]
-public struct SettingValues
+public class SettingValues
 {
     public SettingValues(string p_name, bool p_fscreen, int p_vsynch, int p_res, int p_textQual, int p_aaMethod, int p_aaQual, int p_shadowQual, int p_shadowDist)
     {

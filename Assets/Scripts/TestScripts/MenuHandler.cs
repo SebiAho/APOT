@@ -10,6 +10,10 @@ public class MenuHandler : MonoBehaviour
     
     public GameObject currentMenu;
 
+    [Header("ABOT Menu")]
+    public PerformanceOptimizationHandler abot;
+    public TMPro.TMP_Dropdown optimizationMethod;
+
     [Header("Graphics Menu")]
     [Tooltip("Leave this empty if graphics settings arent used")]
     public GraphicsSettings graphics;
@@ -34,6 +38,12 @@ public class MenuHandler : MonoBehaviour
 
     private void Start()
     {
+        if(abot != null)
+        {
+            optimizationMethod.options.Clear();
+            optimizationMethod.AddOptions(new List<string> { "Optimize Settings", "Optimize Presets", "Optimize Both" });
+        }
+
         //Graphics settings
         if (graphics != null)
         {
@@ -124,6 +134,17 @@ public class MenuHandler : MonoBehaviour
             p_object.SetActive(false);
         else
             p_object.SetActive(true);
+    }
+
+    //ABOT Menu
+    public void ButtonStartOptimization()
+    {
+
+    }
+
+    public void ButtonSelectOptimizationMethod()
+    {
+
     }
 
     //Graphics Settings
