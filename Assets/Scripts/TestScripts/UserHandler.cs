@@ -51,8 +51,11 @@ public class UserHandler : MonoBehaviour
     //Automatic movement
     [Header("Automatic Movement")]
     [Tooltip("Move user automatically, if true uses the values in AutomaticMovementHandler for move speed, camera can still be used to look around if enabled")]
-    public bool automaticMovement = false;
     public AutomaticMovementHandler autoMoveHandler;
+    public bool automaticMovement = false;
+    public bool useHandlerMoveSpeed = false;
+    public bool useHandlerCameraRotation = false;
+    public bool usePhysics = false;
 
     //Pause
     public static bool programPaused = false;
@@ -88,6 +91,20 @@ public class UserHandler : MonoBehaviour
         //Automatic movement
         if (autoMoveHandler != null)
         {
+            if (!useHandlerMoveSpeed)
+                autoMoveHandler.movementSpeed = movementSpeed;
+
+            if (!useHandlerCameraRotation)
+                autoMoveHandler.rotationSpeed = cameraSpeed;
+
+            if (useCamera)
+                autoMoveHandler.applyRotation = false;
+
+            if (usePhysics)
+                autoMoveHandler.useCustomMovement = true;
+
+            autoMoveHandler.HandlerInitialization();
+
             if (!automaticMovement)
             {
                 autoMoveHandler.autoMoveEnabled = false;
@@ -117,6 +134,20 @@ public class UserHandler : MonoBehaviour
             //Movement
             if (!automaticMovement)
                 UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
+            else
+            {
+                autoMoveHandler.HandlerUpdate();
+                if (usePhysics)
+                {
+                    if (autoMoveHandler.autoMoveEnabled)
+                    {
+                        userMoveDirection = autoMoveHandler.moveDirection - transform.position;
+                        ApplyGrafity();
+                        userMoveDirection.y = fallVelocity;
+                        characterController.Move(userMoveDirection * autoMoveHandler.movementSpeed * Time.deltaTime);
+                    }
+                }
+            }
         }
 
         //Pause
@@ -143,7 +174,7 @@ public class UserHandler : MonoBehaviour
         //Set movement towards camera direction
         userMoveDirection = cameraTransform.right * p_horizMovInput + cameraTransform.forward * p_vertMovInput;
 
-        //Prefent faster diagonal movement
+        //Prevent faster diagonal movement
         if (userMoveDirection.sqrMagnitude > 1)
             userMoveDirection.Normalize();
 
