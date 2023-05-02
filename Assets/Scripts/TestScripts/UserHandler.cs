@@ -50,9 +50,8 @@ public class UserHandler : MonoBehaviour
 
     //Automatic movement
     [Header("Automatic Movement")]
-    [Tooltip("Move user automatically, if true uses the values in AutomaticMovementHandler for move speed, camera can still be used to look around if enabled")]
+    [Tooltip("Move user automatically, if true uses the values in AutomaticMovementHandler for move speed, camera can still be used to look around if enabled, the automatic movement can be disabled by setting the component to inactive")]
     public AutomaticMovementHandler autoMoveHandler;
-    public bool automaticMovement = false;
     public bool useHandlerMoveSpeed = false;
     public bool useHandlerCameraRotation = false;
     public bool usePhysics = false;
@@ -83,18 +82,13 @@ public class UserHandler : MonoBehaviour
         if (moveSpeedModifiers.Count <= 0)
             moveSpeedModifiers = new List<float> { 1 };
 
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
         //Automatic movement
         if (autoMoveHandler != null)
         {
-            if (!useHandlerMoveSpeed)
+            if (useHandlerMoveSpeed)
                 autoMoveHandler.movementSpeed = movementSpeed;
 
-            if (!useHandlerCameraRotation)
+            if (useHandlerCameraRotation)
                 autoMoveHandler.rotationSpeed = cameraSpeed;
 
             if (useCamera)
@@ -104,22 +98,12 @@ public class UserHandler : MonoBehaviour
                 autoMoveHandler.useCustomMovement = true;
 
             autoMoveHandler.HandlerInitialization();
-
-            if (!automaticMovement)
-            {
-                autoMoveHandler.autoMoveEnabled = false;
-                if (useCamera)
-                    autoMoveHandler.applyRotation = false;
-            }
-            else
-            {
-                autoMoveHandler.autoMoveEnabled = true;
-                if (autoMoveHandler.applyRotation)
-                    useCamera = false;
-            }
         }
-        else
-            automaticMovement = false;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
     }
 
     // Update is called once per frame
@@ -132,7 +116,7 @@ public class UserHandler : MonoBehaviour
                 CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput));
 
             //Movement
-            if (!automaticMovement)
+            if (autoMoveHandler == null | !autoMoveHandler.enabled)
                 UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
             else
             {
@@ -141,7 +125,7 @@ public class UserHandler : MonoBehaviour
                 {
                     if (autoMoveHandler.autoMoveEnabled)
                     {
-                        userMoveDirection = autoMoveHandler.moveDirection - transform.position;
+                        userMoveDirection = autoMoveHandler.getMoveDirection() - transform.position;
                         ApplyGrafity();
                         userMoveDirection.y = fallVelocity;
                         characterController.Move(userMoveDirection * autoMoveHandler.movementSpeed * Time.deltaTime);

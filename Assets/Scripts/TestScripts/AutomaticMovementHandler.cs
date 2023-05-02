@@ -6,9 +6,10 @@ public class AutomaticMovementHandler : MonoBehaviour
 {
 
     bool mainHandler = true;//Is this script the main handler of the object, if false the main handler needs to call the initialization and update functions separately 
-
     [Tooltip("Does the object move automatically")]
     public bool autoMoveEnabled = true;
+    [Tooltip("The number of seconds the movement is delayed from the start of the scene, helps avoid potential bugs that can occur if moving before the scene is fully loaded")]
+    public float moveDelay = 1f;
     [Tooltip("Ignore the Y axis when testing for distance")]
     public bool ignoreYDistance = false;
     [Tooltip("Current movepoint the object with this movement handler is moving towards, the starting move point needs to be set in editor or the automatic movement will not start")]
@@ -17,6 +18,10 @@ public class AutomaticMovementHandler : MonoBehaviour
     public bool useCustomMovement = false;
     [Tooltip("The move speed of the object")]
     public float movementSpeed = 1f;
+    [Tooltip("The number of times the object goes trough the movepoints, when it encounters a movepoint where lastMovePoint = true the current circuit is considered finished")]
+    public int circuitAmount = 1;
+
+    [Header("Rotation")]
     [Tooltip("Apply automatic rotation using viewDirection to object")]
     public bool applyRotation = true;
     [Tooltip("Use view direction set by move point, if move point does not have view direction set, previous view direction will be used")]
@@ -25,11 +30,13 @@ public class AutomaticMovementHandler : MonoBehaviour
     public Transform viewDirection;
     [Tooltip("The roation speed of the object")]
     public float rotationSpeed = 1f;
-    
-    [HideInInspector]
-    public Vector3 moveDirection;
+
+    Vector3 moveDirection;//Used to give other scripts the direction of the current movepoint
+    bool movementFinished = false;//Used to tell other scripts when the movement has been finished
 
     bool atMovePoint;//Is object at movepoint
+    int completedCircuits = 0;//The amount of circuits the object has completed
+
     Quaternion lookRotation;//Used to calculate the direction object is rotated towards
     Vector3 lookDirection;//Used to calculate the direction object is rotated towards
     Vector3 currentPosition, targetPosition;//Used to perform position related calculations
@@ -55,22 +62,20 @@ public class AutomaticMovementHandler : MonoBehaviour
     {
         if (applyRotation && currentMovePoint != null)
         {
-            if (autoMoveEnabled && useMovePointViewDirection)
+            if (useMovePointViewDirection)
                 viewDirection = currentMovePoint.viewDirection;
 
             if (viewDirection == null)
                 applyRotation = false;
         }
+
+        if (!MovePointValid(ref currentMovePoint))
+            autoMoveEnabled = false;
     }
 
     //If this script is not the main handler this or its overload needs to be called in the actual handler script of the object
-    public void HandlerInitialization(bool p_move = true)
+    public void HandlerInitialization()
     {
-        if (p_move && MovePointValid(ref currentMovePoint))
-            autoMoveEnabled = true;
-        else
-            autoMoveEnabled = false;
-
         mainHandler = false;
         HandlerInit();
     }
@@ -79,7 +84,7 @@ public class AutomaticMovementHandler : MonoBehaviour
     public void HandlerUpdate()
     {
         //Movement
-        if (autoMoveEnabled)
+        if (autoMoveEnabled && moveDelay <= 0)
         {
             //Check if object is or isn't at current move point
             if (ignoreYDistance)
@@ -94,23 +99,42 @@ public class AutomaticMovementHandler : MonoBehaviour
             }
             atMovePoint = Vector3.Distance(currentPosition, targetPosition) <= currentMovePoint.touchRadius;
 
-            if (!atMovePoint)
+            if (!atMovePoint)//If object isin't at movepoint move object towards it or assign it's direction to be used in a custom movement code
             {
-                if(!useCustomMovement)
+                if (!useCustomMovement)
                     transform.position = moveDirection = Vector3.MoveTowards(transform.position, currentMovePoint.transform.position, movementSpeed * Time.deltaTime);
                 else
                     moveDirection = Vector3.MoveTowards(transform.position, currentMovePoint.transform.position, movementSpeed * Time.deltaTime);
             }
-            else if (MovePointValid(ref currentMovePoint.nextMovePoint))
+            else//If object is at a movepoint either assign a new one or finish the movement
             {
-                currentMovePoint = currentMovePoint.nextMovePoint;
+                //Finish movement or continue to the next circuit when at the last movepoint
+                if (currentMovePoint.lastMovepoint == true)
+                {
+                    if (completedCircuits < circuitAmount)
+                        completedCircuits++;
 
-                if (applyRotation && useMovePointViewDirection && currentMovePoint.viewDirection != null)
-                    viewDirection = currentMovePoint.viewDirection;
+                    if(completedCircuits >= circuitAmount | !MovePointValid(ref currentMovePoint.nextMovePoint))
+                    {
+                        movementFinished = true;
+                        autoMoveEnabled = false;
+                        Debug.Log("Movement finished");
+                    }
+                }
+
+                //Set the next movepoint if it is valid
+                if (MovePointValid(ref currentMovePoint.nextMovePoint) && !movementFinished)
+                {
+                    currentMovePoint = currentMovePoint.nextMovePoint;
+
+                    if (applyRotation && useMovePointViewDirection && currentMovePoint.viewDirection != null)
+                        viewDirection = currentMovePoint.viewDirection;
+                }
             }
-            else
-                autoMoveEnabled = false;
         }
+        else if(moveDelay > 0)
+            moveDelay -= Time.deltaTime;
+
 
         //Rotation
         if (applyRotation)
@@ -132,5 +156,15 @@ public class AutomaticMovementHandler : MonoBehaviour
             return true;
 
         return false;
+    }
+
+    public Vector3 getMoveDirection()
+    {
+        return moveDirection;
+    }
+
+    public bool getMovementFinished()
+    {
+        return movementFinished;
     }
 }
