@@ -41,7 +41,8 @@ public class MenuHandler : MonoBehaviour
         if(abot != null)
         {
             optimizationMethod.options.Clear();
-            optimizationMethod.AddOptions(new List<string> { "Optimize Settings", "Optimize Presets", "Optimize Both" });
+            optimizationMethod.AddOptions(new List<string> { "Invidual Settings", "Invidual Presets", "Hybrid" });
+
         }
 
         //Graphics settings

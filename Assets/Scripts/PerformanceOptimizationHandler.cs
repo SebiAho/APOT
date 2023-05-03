@@ -2,13 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public static class PerfromanceData
+{
+    //Scene Settings
+    public static int sceneMode = 0;//The mode scene will use -1 = SceneModeHandler disbaled, 0 = default, 1 = perfromance test
+    public static string menuSceneName;
+    public static string testSceneName; 
+
+    //ABOT Settings
+    public static int targetFPS;
+    public static float delayTime;//The time used to delay performance test
+
+    //Setting list
+    public static bool settingListInitialized = false;
+    public static List<SValue> settingList;
+
+    //Data tracker data
+    public static float currentFrameRate;
+    public static float averageFrameRate;
+    public static float lowestFrameRate;
+    public static float highestFrameRate;
+    public static float lowestAverageFrameRate;
+    public static float highestAverageFrameRate;
+}
+
 public class PerformanceOptimizationHandler : MonoBehaviour
 {
     public PerformanceDataTracker dataTracker;
+    public PerformanceTest performanceTest;
     public GraphicsSettings graphics;
 
-    [Tooltip("If true the handler will add the ingame settings to the list to the game")]
+    [Tooltip("The frame rate that the system aims optain")]
+    public int targetFPS = 60;
+
+    [Tooltip("If true the handler will add the ingame settings to the game, if false the developer needs to add the settings separately")]
     bool useGameSettings = true;
+    [Tooltip("List of graphics settings. it is possible to give a single setting multiple values which will be evaluated separately based on their priority. Note changes to the list after starting the program have no effect ")]
     public List<SValue> settingList = new List<SValue>();
     [Tooltip("If the the combined priorities are the same, sort based on the favored impact type")]
     public bool favorGraphics = false;
@@ -17,6 +46,9 @@ public class PerformanceOptimizationHandler : MonoBehaviour
     {
         if (dataTracker == null)
             dataTracker = GetComponent<PerformanceDataTracker>();
+
+        if (performanceTest == null)
+            performanceTest = GetComponent<PerformanceTest>();
     }
 
     // Start is called before the first frame update
@@ -28,6 +60,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
             AddSettings();
         }
         SortSettings();
+        PerfromanceData.settingList = new List<SValue>(settingList);
     }
 
     // Update is called once per frame
@@ -38,17 +71,35 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
     void AddSettings()
     {
-        settingList.Clear();
+        //If static perfromance list is initialized get settings from there
+        if (PerfromanceData.settingListInitialized)
+        {
+            settingList.Clear();
+            settingList = new List<SValue>(PerfromanceData.settingList);
+        }
 
-        //Add settings
-        settingList.Add(graphics.settingValues.fullScreen);
-        settingList.Add(graphics.settingValues.vSynch);
-        settingList.Add(graphics.settingValues.resolutionIndex);
-        settingList.Add(graphics.settingValues.textureQuality);
-        settingList.Add(graphics.settingValues.aaMethod);
-        settingList.Add(graphics.settingValues.aaQuality);
-        settingList.Add(graphics.settingValues.shadowQuality);
-        settingList.Add(graphics.settingValues.shadowDistance);
+        //Use setting stored int settingList
+        if (useGameSettings && !PerfromanceData.settingListInitialized)
+        {
+            settingList.Clear();
+
+            //Add settings
+            settingList.Add(graphics.settingValues.fullScreen);
+            settingList.Add(graphics.settingValues.vSynch);
+            settingList.Add(graphics.settingValues.resolutionIndex);
+            settingList.Add(graphics.settingValues.textureQuality);
+            settingList.Add(graphics.settingValues.aaMethod);
+            settingList.Add(graphics.settingValues.aaQuality);
+            settingList.Add(graphics.settingValues.shadowQuality);
+            settingList.Add(graphics.settingValues.shadowDistance);
+        }
+
+        //Initialize static setting list
+        if (!PerfromanceData.settingListInitialized)
+        {
+            PerfromanceData.settingList = new List<SValue>(settingList);
+            PerfromanceData.settingListInitialized = true;
+        }
     }
 
     void SortSettings()

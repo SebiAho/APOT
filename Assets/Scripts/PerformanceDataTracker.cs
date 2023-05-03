@@ -24,7 +24,7 @@ public class PerformanceDataTracker : MonoBehaviour
     public bool startTracking { get; private set; } = true;
 
      //Average fps calculation
-    [Tooltip("Time frame the average fps is calculated, note that untile the time frame has passed once, the averageFrameRate value will be 0")]
+    [Tooltip("Time frame the average fps is calculated, note that until the time frame has passed at least once, the averageFrameRate value will be 0")]
     public float averageFPSTimeFrame = 1f;
     float averageSum = 0f, elapsedAverageTime = 0f, averageFPS = 0f;
     int averageIndex = 0;
@@ -121,5 +121,15 @@ public class PerformanceDataTracker : MonoBehaviour
             if (data.highestAverageFrameRate < data.averageFrameRate)
                 data.highestAverageFrameRate = data.averageFrameRate;
         }
+    }
+
+    public void StoreData()
+    {
+        PerfromanceData.currentFrameRate = data.currentFrameRate;
+        PerfromanceData.averageFrameRate = data.averageFrameRate;
+        PerfromanceData.lowestFrameRate = data.lowestFrameRate;
+        PerfromanceData.highestFrameRate = data.highestFrameRate;
+        PerfromanceData.lowestAverageFrameRate = data.lowestAverageFrameRate;
+        PerfromanceData.highestAverageFrameRate = data.highestAverageFrameRate;
     }
 }

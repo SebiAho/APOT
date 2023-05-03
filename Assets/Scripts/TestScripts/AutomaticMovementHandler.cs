@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class AutomaticMovementHandler : MonoBehaviour
 {
-
-    bool mainHandler = true;//Is this script the main handler of the object, if false the main handler needs to call the initialization and update functions separately 
+    [Tooltip("Is this script the main handler of the object, if false the main handler needs to call the initialization and update functions separately")]
+    public bool mainHandler = true;
     [Tooltip("Does the object move automatically")]
     public bool autoMoveEnabled = true;
     [Tooltip("The number of seconds the movement is delayed from the start of the scene, helps avoid potential bugs that can occur if moving before the scene is fully loaded")]
@@ -49,6 +49,15 @@ public class AutomaticMovementHandler : MonoBehaviour
     {
         if (mainHandler)
             HandlerInit();
+
+        if (applyRotation && currentMovePoint != null)
+        {
+            if (useMovePointViewDirection)
+                viewDirection = currentMovePoint.viewDirection;
+        }
+
+        if (viewDirection == null)
+            applyRotation = false;
     }
 
     // Update is called once per frame
@@ -58,26 +67,19 @@ public class AutomaticMovementHandler : MonoBehaviour
             HandlerUpdate();
     }
 
-    void HandlerInit()
+    //If this script is not the main handler this needs to be called in the actual handler script of the object
+    public void HandlerInit()
     {
-        if (applyRotation && currentMovePoint != null)
+        if (!MovePointValid(currentMovePoint))
         {
-            if (useMovePointViewDirection)
-                viewDirection = currentMovePoint.viewDirection;
-
-            if (viewDirection == null)
-                applyRotation = false;
+            autoMoveEnabled = false;
         }
 
-        if (!MovePointValid(ref currentMovePoint))
-            autoMoveEnabled = false;
-    }
-
-    //If this script is not the main handler this or its overload needs to be called in the actual handler script of the object
-    public void HandlerInitialization()
-    {
-        mainHandler = false;
-        HandlerInit();
+        if (autoMoveEnabled)
+        {
+            //Initialize moveDirection value to avoid potential bugs
+            moveDirection = Vector3.MoveTowards(transform.position, currentMovePoint.transform.position, 0);
+        }
     }
 
     //If this script is not the main handler this needs to be called in the actual main handler script of the object
@@ -114,7 +116,7 @@ public class AutomaticMovementHandler : MonoBehaviour
                     if (completedCircuits < circuitAmount)
                         completedCircuits++;
 
-                    if(completedCircuits >= circuitAmount | !MovePointValid(ref currentMovePoint.nextMovePoint))
+                    if(completedCircuits >= circuitAmount | !MovePointValid(currentMovePoint.nextMovePoint))
                     {
                         movementFinished = true;
                         autoMoveEnabled = false;
@@ -123,7 +125,7 @@ public class AutomaticMovementHandler : MonoBehaviour
                 }
 
                 //Set the next movepoint if it is valid
-                if (MovePointValid(ref currentMovePoint.nextMovePoint) && !movementFinished)
+                if (MovePointValid(currentMovePoint.nextMovePoint) && !movementFinished)
                 {
                     currentMovePoint = currentMovePoint.nextMovePoint;
 
@@ -150,7 +152,7 @@ public class AutomaticMovementHandler : MonoBehaviour
         }
     }
 
-    bool MovePointValid(ref AutomaticMovementPoint p_movePoint)
+    bool MovePointValid(AutomaticMovementPoint p_movePoint)
     {
         if (p_movePoint != null && p_movePoint.movePointEnabled)
             return true;

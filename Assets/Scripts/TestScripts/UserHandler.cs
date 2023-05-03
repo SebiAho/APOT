@@ -50,8 +50,10 @@ public class UserHandler : MonoBehaviour
 
     //Automatic movement
     [Header("Automatic Movement")]
-    [Tooltip("Move user automatically, if true uses the values in AutomaticMovementHandler for move speed, camera can still be used to look around if enabled, the automatic movement can be disabled by setting the component to inactive")]
     public AutomaticMovementHandler autoMoveHandler;
+    [Tooltip("Disable automatic movement without removing/disabling the AutmotaticMovementHandler component")]
+    public bool moveAutomatically = true;
+
     public bool useHandlerMoveSpeed = false;
     public bool useHandlerCameraRotation = false;
     public bool usePhysics = false;
@@ -96,14 +98,19 @@ public class UserHandler : MonoBehaviour
 
             if (usePhysics)
                 autoMoveHandler.useCustomMovement = true;
+            else
+                autoMoveHandler.useCustomMovement = false;
 
-            autoMoveHandler.HandlerInitialization();
+            autoMoveHandler.HandlerInit();
         }
+        else
+            moveAutomatically = false;
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        //UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
     }
 
     // Update is called once per frame
@@ -116,14 +123,14 @@ public class UserHandler : MonoBehaviour
                 CameraRotation(Input.GetAxis(verticalCameraInput), Input.GetAxis(horizontalCameraInput));
 
             //Movement
-            if (autoMoveHandler == null | !autoMoveHandler.enabled)
+            if (autoMoveHandler == null | !moveAutomatically)
                 UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
             else
             {
                 autoMoveHandler.HandlerUpdate();
                 if (usePhysics)
                 {
-                    if (autoMoveHandler.autoMoveEnabled)
+                    if (autoMoveHandler.autoMoveEnabled && autoMoveHandler.moveDelay <= 0)
                     {
                         userMoveDirection = autoMoveHandler.getMoveDirection() - transform.position;
                         ApplyGrafity();
