@@ -101,7 +101,7 @@ public class UserHandler : MonoBehaviour
             else
                 autoMoveHandler.useCustomMovement = false;
 
-            autoMoveHandler.HandlerInit();
+            autoMoveHandler.HandlerInitAwake();
         }
         else
             moveAutomatically = false;
@@ -110,7 +110,10 @@ public class UserHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(autoMoveHandler != null)
+            autoMoveHandler.HandlerInitStart();
         //UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
+        Debug.Log("Mode " + PerformanceData.sceneMode);
     }
 
     // Update is called once per frame

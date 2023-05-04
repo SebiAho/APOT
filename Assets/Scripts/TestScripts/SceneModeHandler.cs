@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SceneModeHandler : MonoBehaviour
 {
+    [Tooltip("the move the scene will use, -1 = handler disabled")]
     public int sceneMode = 0;
     [Tooltip("Use scene mode value stored into the static class PerformanceOptimizationHandler")]
     public bool useStoredValue = true;
@@ -21,7 +22,7 @@ public class SceneModeHandler : MonoBehaviour
         else
         {
             if (useStoredValue)
-                sceneMode = PerfromanceData.sceneMode;
+                sceneMode = PerformanceData.sceneMode;
 
             foreach (GameObject i in modeObjects)
                 i.SetActive(false);

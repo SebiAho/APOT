@@ -12,7 +12,7 @@ public class MenuHandler : MonoBehaviour
 
     [Header("ABOT Menu")]
     public PerformanceOptimizationHandler abot;
-    public TMPro.TMP_Dropdown optimizationMethod;
+    public TMPro.TMP_InputField fpsInput;
 
     [Header("Graphics Menu")]
     [Tooltip("Leave this empty if graphics settings arent used")]
@@ -38,13 +38,6 @@ public class MenuHandler : MonoBehaviour
 
     private void Start()
     {
-        if(abot != null)
-        {
-            optimizationMethod.options.Clear();
-            optimizationMethod.AddOptions(new List<string> { "Invidual Settings", "Invidual Presets", "Hybrid" });
-
-        }
-
         //Graphics settings
         if (graphics != null)
         {
@@ -128,6 +121,11 @@ public class MenuHandler : MonoBehaviour
         SceneManager.LoadScene(p_sceneName);
     }
 
+    public void ButtonSetMode(int p_mode)
+    {
+        PerformanceData.sceneMode = p_mode;
+    }
+
     //Set object inactive if it is active and active if it isin't
     public void ButtonActiveObject(GameObject p_object)
     {
@@ -140,12 +138,21 @@ public class MenuHandler : MonoBehaviour
     //ABOT Menu
     public void ButtonStartOptimization()
     {
-
+        abot.StartPerformanceTest();
     }
 
-    public void ButtonSelectOptimizationMethod()
+    public void ButtonGetTargetFrameRate()
     {
-
+        if (fpsInput != null)
+        {
+            int t_tFps = abot.targetFPS;
+            if (int.TryParse(fpsInput.text, out t_tFps))
+                abot.targetFPS = t_tFps;
+            else
+                Debug.Log("Parse vailed using value " + t_tFps);
+        }
+        else
+            Debug.Log("Fps input field not assigned");
     }
 
     //Graphics Settings

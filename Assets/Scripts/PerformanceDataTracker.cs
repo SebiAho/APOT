@@ -19,8 +19,7 @@ public class PerformanceDataTracker : MonoBehaviour
 {
     //Tacking Delay
     [Tooltip("Time to the start of tracking is delayed(in seconds), set to 0 to disable, this should help to avoid any potential startup lag of the program from messing the results")]
-    [SerializeField]
-    float delayDataTracking = 0f;
+    public float delayDataTracking = 0f;
     public bool startTracking { get; private set; } = true;
 
      //Average fps calculation
@@ -125,11 +124,11 @@ public class PerformanceDataTracker : MonoBehaviour
 
     public void StoreData()
     {
-        PerfromanceData.currentFrameRate = data.currentFrameRate;
-        PerfromanceData.averageFrameRate = data.averageFrameRate;
-        PerfromanceData.lowestFrameRate = data.lowestFrameRate;
-        PerfromanceData.highestFrameRate = data.highestFrameRate;
-        PerfromanceData.lowestAverageFrameRate = data.lowestAverageFrameRate;
-        PerfromanceData.highestAverageFrameRate = data.highestAverageFrameRate;
+        PerformanceData.currentFrameRate = data.currentFrameRate;
+        PerformanceData.averageFrameRate = data.averageFrameRate;
+        PerformanceData.lowestFrameRate = data.lowestFrameRate;
+        PerformanceData.highestFrameRate = data.highestFrameRate;
+        PerformanceData.lowestAverageFrameRate = data.lowestAverageFrameRate;
+        PerformanceData.highestAverageFrameRate = data.highestAverageFrameRate;
     }
 }

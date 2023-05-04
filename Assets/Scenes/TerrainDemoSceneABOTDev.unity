@@ -1262,6 +1262,11 @@ PrefabInstance:
       objectReference: {fileID: 1723732445}
     - target: {fileID: 5441653776190930521, guid: fb4a9d305cbfdd545846715c292a1845,
         type: 3}
+      propertyPath: useStoredValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5441653776190930521, guid: fb4a9d305cbfdd545846715c292a1845,
+        type: 3}
       propertyPath: automaticMovement
       value: 
       objectReference: {fileID: 1723732444}
@@ -6069,6 +6074,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5923236292868263079, guid: 4d078a0f7f3abd24bac237d2c3861fa3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5923236292868263081, guid: 4d078a0f7f3abd24bac237d2c3861fa3,
         type: 3}
       propertyPath: delayDataTracking
@@ -6214,6 +6224,11 @@ PrefabInstance:
       propertyPath: rotationSpeed
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 5923236293390717495, guid: 4d078a0f7f3abd24bac237d2c3861fa3,
+        type: 3}
+      propertyPath: viewDirection
+      value: 
+      objectReference: {fileID: 288952634}
     - target: {fileID: 5923236293390717495, guid: 4d078a0f7f3abd24bac237d2c3861fa3,
         type: 3}
       propertyPath: autoMoveEnabled

@@ -43,21 +43,14 @@ public class AutomaticMovementHandler : MonoBehaviour
 
     private void Awake()
     {
+        if (mainHandler)
+            HandlerInitAwake();
     }
     // Start is called before the first frame update
     void Start()
     {
         if (mainHandler)
-            HandlerInit();
-
-        if (applyRotation && currentMovePoint != null)
-        {
-            if (useMovePointViewDirection)
-                viewDirection = currentMovePoint.viewDirection;
-        }
-
-        if (viewDirection == null)
-            applyRotation = false;
+            HandlerInitStart();
     }
 
     // Update is called once per frame
@@ -68,7 +61,7 @@ public class AutomaticMovementHandler : MonoBehaviour
     }
 
     //If this script is not the main handler this needs to be called in the actual handler script of the object
-    public void HandlerInit()
+    public void HandlerInitAwake()
     {
         if (!MovePointValid(currentMovePoint))
         {
@@ -80,6 +73,19 @@ public class AutomaticMovementHandler : MonoBehaviour
             //Initialize moveDirection value to avoid potential bugs
             moveDirection = Vector3.MoveTowards(transform.position, currentMovePoint.transform.position, 0);
         }
+    }
+
+    //If this script is not the main handler this needs to be called in the actual handler script of the object
+    public void HandlerInitStart()
+    {
+        if (applyRotation && currentMovePoint != null)
+        {
+            if (useMovePointViewDirection)
+                viewDirection = currentMovePoint.viewDirection;
+        }
+
+        if (viewDirection == null)
+            applyRotation = false;
     }
 
     //If this script is not the main handler this needs to be called in the actual main handler script of the object

@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public static class PerfromanceData
+public static class PerformanceData
 {
+    public static bool initData = false;//Initialize data using values stored in this class?
+
     //Scene Settings
-    public static int sceneMode = 0;//The mode scene will use -1 = SceneModeHandler disbaled, 0 = default, 1 = perfromance test
+    public static int sceneMode = -1;//The mode a scene will use, -1 = SceneModeHandler disbaled, 0 = default, 1 = perfromance test
     public static string menuSceneName;
     public static string testSceneName; 
 
     //ABOT Settings
     public static int targetFPS;
     public static float delayTime;//The time used to delay performance test
+    public static bool testStarted = false;
 
     //Setting list
     public static bool settingListInitialized = false;
@@ -29,7 +33,7 @@ public static class PerfromanceData
 public class PerformanceOptimizationHandler : MonoBehaviour
 {
     public PerformanceDataTracker dataTracker;
-    public PerformanceTest performanceTest;
+    public AutomaticMovementHandler movementHandler;
     public GraphicsSettings graphics;
 
     [Tooltip("The frame rate that the system aims optain")]
@@ -42,44 +46,89 @@ public class PerformanceOptimizationHandler : MonoBehaviour
     [Tooltip("If the the combined priorities are the same, sort based on the favored impact type")]
     public bool favorGraphics = false;
 
+    [Header("Perfromance Test")]
+    [Tooltip("Scene used in testing")]
+    public string testSceneName = "TerrainDemoSceneABOTDev";
+    [Tooltip("Scene where main menu is located")]
+    public string menuSceneName = "MainMenu";
+    [Tooltip("Delay the start of the test to avoid the initial loading of the scene from affecting it")]
+    public float delayTest = 2;
+
+
+    bool testingEnabled = false;
+
     private void Awake()
     {
         if (dataTracker == null)
             dataTracker = GetComponent<PerformanceDataTracker>();
 
-        if (performanceTest == null)
-            performanceTest = GetComponent<PerformanceTest>();
+        InitPerformanceDataAwake();
+
+        //Performance testing
+        if (dataTracker == null)
+            dataTracker = GetComponent<PerformanceDataTracker>();
+
+        if (movementHandler == null)
+            movementHandler = GetComponent<AutomaticMovementHandler>();
+
+        if (dataTracker != null && movementHandler != null)
+        {
+            testingEnabled = true;
+            dataTracker.delayDataTracking = delayTest;
+            movementHandler.moveDelay = delayTest;
+        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        if (useGameSettings)
+        if (!PerformanceData.initData)
         {
-            TempSetPriorities();
-            AddSettings();
+            if (useGameSettings)
+            {
+                TempSetPriorities();
+                AddSettings();
+            }
+            SortSettings();
         }
-        SortSettings();
-        PerfromanceData.settingList = new List<SValue>(settingList);
+        else
+            InitPerformanceDataStart();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+    void LateUpdate()
+    {
+        if (testingEnabled && PerformanceData.testStarted)
+        {
+            if (!movementHandler.getMovementFinished())
+            {
+
+            }
+            else
+            {
+                dataTracker.StoreData();
+                PerformanceData.testStarted = false;
+                SceneManager.LoadScene(menuSceneName);
+            }
+        }
     }
 
     void AddSettings()
     {
         //If static perfromance list is initialized get settings from there
-        if (PerfromanceData.settingListInitialized)
+        if (PerformanceData.settingListInitialized)
         {
             settingList.Clear();
-            settingList = new List<SValue>(PerfromanceData.settingList);
+            settingList = new List<SValue>(PerformanceData.settingList);
         }
 
         //Use setting stored int settingList
-        if (useGameSettings && !PerfromanceData.settingListInitialized)
+        if (useGameSettings && !PerformanceData.settingListInitialized)
         {
             settingList.Clear();
 
@@ -95,10 +144,10 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         }
 
         //Initialize static setting list
-        if (!PerfromanceData.settingListInitialized)
+        if (!PerformanceData.settingListInitialized)
         {
-            PerfromanceData.settingList = new List<SValue>(settingList);
-            PerfromanceData.settingListInitialized = true;
+            PerformanceData.settingList = new List<SValue>(settingList);
+            PerformanceData.settingListInitialized = true;
         }
     }
 
@@ -182,4 +231,52 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         graphics.settingValues.shadowDistance.pImpact = 5;
         graphics.settingValues.shadowDistance.gImpact = 3;
     }
+
+    public void StartPerformanceTest()
+    {
+        //Initialize values
+        PerformanceData.testStarted = true;
+        PerformanceData.delayTime = delayTest;
+        PerformanceData.menuSceneName = menuSceneName;
+        PerformanceData.testSceneName = testSceneName;
+
+        //Start test        
+        PerformanceData.sceneMode = 1; //Note that the ScenModeHandler will automatically get this value
+        SceneManager.LoadScene(testSceneName);
+    }
+
+    void InitializePerfromanceData()
+    {
+        PerformanceData.initData = true;
+        PerformanceData.settingList = new List<SValue>(settingList);
+
+        //Abot settings
+        PerformanceData.targetFPS = targetFPS; //Debug.Log("Target fps: " + PerfromanceData.targetFPS);
+    }
+
+    void InitPerformanceDataAwake()
+    {
+        if(PerformanceData.initData)
+        {
+            targetFPS = PerformanceData.targetFPS;
+        }
+
+        if(PerformanceData.testStarted)
+        {
+            delayTest = PerformanceData.delayTime;
+            menuSceneName = PerformanceData.menuSceneName;
+            testSceneName = PerformanceData.testSceneName;            
+        }
+    }
+
+    void InitPerformanceDataStart()
+    {
+        if (PerformanceData.initData)
+        {
+            settingList = new List<SValue>(PerformanceData.settingList);
+        }
+    }
+
+
+
 }
