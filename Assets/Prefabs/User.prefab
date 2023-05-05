@@ -1233,11 +1233,13 @@ MonoBehaviour:
   movementHandler: {fileID: 5923236293390717495}
   graphics: {fileID: 9194557103464686394}
   targetFPS: 60
+  useGameSettings: 1
   settingList: []
   favorGraphics: 0
   testSceneName: TerrainDemoSceneABOTDev
   menuSceneName: MainMenu
   delayTest: 2
+  maxTimeBelowTarget: 0
 --- !u!114 &5923236292868263081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1250,15 +1252,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21b4c56db205fc642ba9a5b57e8ed65f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayDataTracking: 0
-  averageFPSTimeFrame: 1
   data:
+    testTime: 0
     currentFrameRate: 0
     averageFrameRate: 0
     lowestFrameRate: 0
     highestFrameRate: 0
     lowestAverageFrameRate: 0
     highestAverageFrameRate: 0
+    timeUnderTargetFPS: 0
+    timeAboveTargetFPS: 0
+    averageUnderTargetFPS: 0
+    averageAboveTargetFPS: 0
+  delayDataTracking: 0
+  averageFPSTimeFrame: 1
+  testPerfromance: 1
+  targetFPS: 60
 --- !u!1 &5923236292933692841
 GameObject:
   m_ObjectHideFlags: 0
@@ -1337,6 +1346,16 @@ MonoBehaviour:
 
     0
 
+    0
+
+    0
+
+    0
+
+    0
+
+    0
+
     0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1346,8 +1365,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278650660
+  m_fontColor: {r: 0.14150941, g: 0.027367385, b: 0.027367385, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1454,12 +1473,17 @@ MonoBehaviour:
   dataTracker: {fileID: 5923236292868263081}
   valuesText: {fileID: 5923236292933692843}
   data:
+    testTime: 0
     currentFrameRate: 0
     averageFrameRate: 0
     lowestFrameRate: 0
     highestFrameRate: 0
     lowestAverageFrameRate: 0
     highestAverageFrameRate: 0
+    timeUnderTargetFPS: 0
+    timeAboveTargetFPS: 0
+    averageUnderTargetFPS: 0
+    averageAboveTargetFPS: 0
 --- !u!1 &5923236293273688455
 GameObject:
   m_ObjectHideFlags: 0
@@ -1764,6 +1788,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'FPS
 
+    Test time:
+
     Current FPS:
 
     Average FPS:
@@ -1775,7 +1801,16 @@ MonoBehaviour:
 
     Lowest Average FPS:
 
-    Highest Average FPS:'
+    Highest Average FPS:
+
+    Time Under Target:
+
+    Time
+    Above Target:
+
+    Average Under FPS:
+
+    Average Above FPS:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1784,8 +1819,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278650660
+  m_fontColor: {r: 0.14150941, g: 0.027367385, b: 0.027367385, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2158,8 +2193,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278650660
+  m_fontColor: {r: 0.14150941, g: 0.027367385, b: 0.027367385, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

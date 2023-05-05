@@ -41,11 +41,16 @@ public class PerformanceDataDisplay : MonoBehaviour
     void ConvertDataValuesToString()
     {
         dataValues = "\n" +
+            data.testTime.ToString() + "\n" +
             data.currentFrameRate.ToString() + "\n" +
             data.averageFrameRate.ToString() + "\n" +
             data.lowestFrameRate.ToString() + "\n" +
             data.highestFrameRate.ToString() + "\n" +
             data.lowestAverageFrameRate.ToString() + "\n" +
-            data.highestAverageFrameRate.ToString();
+            data.highestAverageFrameRate.ToString() + "\n" +
+            data.timeUnderTargetFPS.ToString() + "\n" +
+            data.timeAboveTargetFPS.ToString() +"\n" +
+            data.averageUnderTargetFPS.ToString() + "\n" +
+            data.averageAboveTargetFPS.ToString();
     }
 }

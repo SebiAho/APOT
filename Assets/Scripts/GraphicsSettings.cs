@@ -232,4 +232,5 @@ public class GraphicsSettings : MonoBehaviour
     {
         mainAsset.shadowDistance = p_distance;
     }
+
 }
