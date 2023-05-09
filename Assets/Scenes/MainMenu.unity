@@ -3400,9 +3400,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     vSynch:
       id: 
       valueType: 0
@@ -3410,9 +3414,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     resolutionIndex:
       id: 
       valueType: 0
@@ -3420,9 +3428,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     textureQuality:
       id: 
       valueType: 0
@@ -3430,9 +3442,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     aaMethod:
       id: 
       valueType: 0
@@ -3440,9 +3456,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     aaQuality:
       id: 
       valueType: 0
@@ -3450,9 +3470,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     shadowQuality:
       id: 
       valueType: 0
@@ -3460,9 +3484,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     shadowDistance:
       id: 
       valueType: 0
@@ -3470,11 +3498,15 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
   presets: []
-  debuggingInitSettings: 1
+  initSettings: 1
 --- !u!4 &479545409
 Transform:
   m_ObjectHideFlags: 0
@@ -5360,11 +5392,13 @@ MonoBehaviour:
   movementHandler: {fileID: 0}
   graphics: {fileID: 479545408}
   targetFPS: 60
+  useGameSettings: 1
   settingList: []
   favorGraphics: 0
   testSceneName: TerrainDemoSceneABOTDev
   menuSceneName: MainMenu
   delayTest: 3
+  maxTimeBelowTarget: 0
 --- !u!114 &840686540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5377,15 +5411,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21b4c56db205fc642ba9a5b57e8ed65f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayDataTracking: 0
-  averageFPSTimeFrame: 1
   data:
+    testTime: 0
     currentFrameRate: 0
     averageFrameRate: 0
     lowestFrameRate: 0
     highestFrameRate: 0
     lowestAverageFrameRate: 0
     highestAverageFrameRate: 0
+    timeUnderTargetFPS: 0
+    timeAboveTargetFPS: 0
+    averageUnderTargetFPS: 0
+    averageAboveTargetFPS: 0
+  delayDataTracking: 0
+  averageFPSTimeFrame: 1
+  testPerfromance: 1
+  targetFPS: 60
+  fileLocation: C:\Users\TGL\Desktop\Thesis Nico Aho\Unity Files\Test Results\
+  fileName: ABOT Performance Data.txt
 --- !u!4 &840686541
 Transform:
   m_ObjectHideFlags: 0

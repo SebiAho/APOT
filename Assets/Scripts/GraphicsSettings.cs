@@ -7,7 +7,7 @@ using UnityEngine.Rendering.Universal;
 public class SValue
 {
     //Note: might be more practical to replace with a template class
-    public SValue (int p_value, string p_id, bool p_use = true, int p_pImpact = 0, int p_gImpact = 0)
+    public SValue (int p_value, string p_id, bool p_use = true,  int p_pImpact = 0, int p_gImpact = 0)
     {
         id = p_id;
 
@@ -56,21 +56,67 @@ public class SValue
     public float fvalue;
     public bool bvalue;
 
-    //Priorities
+    [Header("Perfromance optimization values")]
     [Tooltip("Use this setting in calculations")]
     public bool use;
+    [Tooltip("The amount this setting will be changed by the ChangeValue method")]
+    public float changeAmount = 1;
+    [Tooltip("The min amount the value can have")]
+    public float minValue = 0;
+
     [Tooltip("The perfromance impact of the setting, settings with higher values are MORE likely to be selected")]
     public int pImpact;
     [Tooltip("The graphical impact of the setting, settings with higher values are LESS likely to be selected")]
     public int gImpact;
-
+    [Tooltip("The value detracted from the impact each time the setting is modified, this is to prefent the repeated changes to the setting")]
+    public int adjustImpact = 0;
     [Tooltip("Set in the PerfromanceOptimizationHandler, equals pImpact - gImpact")]
     public int combinedImpact;
+    [Tooltip("Times the setting has been changed")]
+    public int timesChanged = 0;
+
+    //Reduces the value based on the change amount, if the value type is bool it will only be changed to false if the change amount is creater than zero
+    public bool ReduceValue()
+    {
+        if (valueType == 0 && (ivalue-(int)changeAmount) >= minValue)
+        {
+            ivalue -= (int)changeAmount;
+            return true;
+        }
+        else if (valueType == 1 && (fvalue-changeAmount) >= minValue)
+        {
+            fvalue -= changeAmount;
+            return true;
+        }
+        else if (valueType == 2 && !bvalue)
+        {
+            if (changeAmount > 0)
+            {
+                bvalue = false;
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 
 [System.Serializable]
 public class SettingValues
 {
+    public SettingValues()
+    {
+        presetName = "";
+        fullScreen = new SValue(false, "fullscreen");
+        vSynch = new SValue(0, "vSynch");
+        resolutionIndex = new SValue(0, "resIndex");
+        textureQuality = new SValue(0, "textQual");
+        aaMethod = new SValue(0, "aaMethod");
+        aaQuality = new SValue(0, "aaQual");
+        shadowQuality = new SValue(0, "sQual");
+        shadowDistance = new SValue(0, "sDist");
+    }
+
     public SettingValues(string p_name, bool p_fscreen, int p_vsynch, int p_res, int p_textQual, int p_aaMethod, int p_aaQual, int p_shadowQual, int p_shadowDist)
     {
         presetName = p_name;
@@ -95,6 +141,7 @@ public class SettingValues
     public SValue shadowQuality; //values 0-2
     public SValue shadowDistance;
 }
+
 public class GraphicsSettings : MonoBehaviour
 {
     public UniversalAdditionalCameraData mainCamera;
@@ -106,7 +153,7 @@ public class GraphicsSettings : MonoBehaviour
     public List<SettingValues> presets = new List<SettingValues>();
 
     [Tooltip("If needed for debugging purposes disable to stop the initialization of unity settings using the values stored in the settingValues variable")]
-    public bool debuggingInitSettings = true;
+    public bool initSettings = true;
 
     private void Awake()
     {
@@ -124,8 +171,15 @@ public class GraphicsSettings : MonoBehaviour
         presets.Add(new SettingValues("High", false, 3, 3, 3, 2, 1, 2, 250));
         presets.Add(new SettingValues("Very High", false, 4, 4, 3, 2, 2, 2, 500));
 
-        if (debuggingInitSettings)
-            ChangeSettingValues(presets[3]);
+        if (initSettings)
+        {
+            if (PerformanceData.initData)
+                ChangeSettingValues(PerformanceData.currentSettings);
+            else
+                ChangeSettingValues(presets[3]);
+        }
+        else
+            PerformanceData.currentSettings = settingValues;
     }
 
     // Start is called before the first frame update
@@ -143,14 +197,27 @@ public class GraphicsSettings : MonoBehaviour
     //Change the program setting values to the ones stored in the settingValues variable;
     void ChangeSettingValues()
     {
+        SetShadowQuality(settingValues.shadowQuality.ivalue);//Set shadow quality first as it changes the main asset
+
         SetFullscreen(settingValues.fullScreen.bvalue);
         SetVsynch(settingValues.vSynch.ivalue);
         SetResolution(settingValues.resolutionIndex.ivalue);
 
         SetAntialiazingMethod(settingValues.aaMethod.ivalue);
         SetAntialiazingQuality(settingValues.aaQuality.ivalue);
-        SetShadowQuality(settingValues.shadowQuality.ivalue);
         SetShadowDistance(settingValues.shadowDistance.ivalue);
+    }
+
+    //Sets the id values for setting list
+    public void SetID(ref SettingValues p_settings)
+    {
+        p_settings.fullScreen.id = "fullscreen";
+        p_settings.vSynch.id = "vSynch";
+        p_settings.resolutionIndex.id = "resIndex";
+        p_settings.textureQuality.id = "textQual";
+        p_settings.aaMethod.id = "aaMethod";
+        p_settings.shadowQuality.id = "sQual";
+        p_settings.shadowDistance.id = "sDist";
     }
 
     //Add new values ti the settingValues variable and use them to change the program setting values 
@@ -232,5 +299,4 @@ public class GraphicsSettings : MonoBehaviour
     {
         mainAsset.shadowDistance = p_distance;
     }
-
 }

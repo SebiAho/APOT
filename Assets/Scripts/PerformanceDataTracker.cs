@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 //Container for perfroamance data
 [System.Serializable]
@@ -46,6 +47,10 @@ public class PerformanceDataTracker : MonoBehaviour
     float underTargetSum = 0, aboveTargetSum = 0;
     int underTargetIndex = 0, aboveTargetIndex = 0;
 
+    //Store data
+    public string fileLocation = "Assets/";
+    public string fileName = "ABOT Performance Data.txt";
+
     private void Awake()
     {
         //delayTracking
@@ -64,7 +69,9 @@ public class PerformanceDataTracker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //StoreResultsToFile("test", data, true);
+        Debug.Log("Tracker target fps: " + targetFPS);
+        Debug.Log("Data store target fps: " + PerformanceData.targetFPS);
     }
 
     // Update is called once per frame
@@ -184,7 +191,7 @@ public class PerformanceDataTracker : MonoBehaviour
         aboveTargetIndex = 0;
     }
 
-    public void StoreData(PerformanceDataContainer p_dataStore)
+    public void StoreData(ref PerformanceDataContainer p_dataStore)
     {
         p_dataStore.testTime = data.testTime;
 
@@ -207,5 +214,26 @@ public class PerformanceDataTracker : MonoBehaviour
             return p_data.timeUnderTargetFPS / p_data.testTime * 100;
         else
             return 0;
+    }
+
+    //Store results
+    public void StoreResultsToFile(string p_testName, PerformanceDataContainer p_data, bool p_append)
+    {
+        StreamWriter t_file = new StreamWriter(fileLocation + fileName, p_append);
+
+        string t_text = p_testName + '\n' +
+            "Time: " + System.DateTime.Now + '\n' +
+            '\n' +
+            "Time tested: " + p_data.testTime + '\n' +
+            "Lowest frame rate: " + p_data.lowestFrameRate + '\n' +
+            "Highest frame rate " + p_data.highestFrameRate + '\n' +
+            "Target frame rate: " + targetFPS + '\n' +
+            "Time under target frame rate:" + p_data.timeUnderTargetFPS + '\n' +
+            "Average under target frame rate:" + p_data.averageUnderTargetFPS + '\n' +
+            "Time above target frame rate:" + p_data.timeAboveTargetFPS + '\n' +
+            "Average above target frame rate:" + p_data.averageAboveTargetFPS + '\n' + '\n';
+
+        t_file.WriteLine(t_text);
+        t_file.Close();
     }
 }

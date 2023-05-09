@@ -412,9 +412,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     vSynch:
       id: 
       valueType: 0
@@ -422,9 +426,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     resolutionIndex:
       id: 
       valueType: 0
@@ -432,9 +440,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     textureQuality:
       id: 
       valueType: 0
@@ -442,9 +454,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     aaMethod:
       id: 
       valueType: 0
@@ -452,9 +468,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     aaQuality:
       id: 
       valueType: 0
@@ -462,9 +482,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     shadowQuality:
       id: 
       valueType: 0
@@ -472,9 +496,13 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
     shadowDistance:
       id: 
       valueType: 0
@@ -482,11 +510,15 @@ MonoBehaviour:
       fvalue: 0
       bvalue: 0
       use: 0
+      changeAmount: 0
+      minValue: 0
       pImpact: 0
       gImpact: 0
+      adjustImpact: 0
       combinedImpact: 0
+      timesChanged: 0
   presets: []
-  debuggingInitSettings: 1
+  initSettings: 1
 --- !u!1 &2075842357861792299
 GameObject:
   m_ObjectHideFlags: 0
@@ -1268,6 +1300,8 @@ MonoBehaviour:
   averageFPSTimeFrame: 1
   testPerfromance: 1
   targetFPS: 60
+  fileLocation: C:\Users\TGL\Desktop\Thesis Nico Aho\Unity Files\Test Results\
+  fileName: ABOT Performance Data.txt
 --- !u!1 &5923236292933692841
 GameObject:
   m_ObjectHideFlags: 0

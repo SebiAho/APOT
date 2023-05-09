@@ -20,19 +20,19 @@ public static class PerformanceData
     public static float maxTimeBelowTarget = 0;
     public static bool startSettingOptimization = false;
     public static int testingStage = 0; //Current testing state, 0 = current settings, 1 = Invidual setting testing, -1 = end the test
-    public static int currentSettingIndex = 0;
+    public static int currentSettingIndex = 0;//Index of the setting in settingList that is currently being checked
 
     //Current settings
-    public static SettingValues currentSettings;
+    public static SettingValues currentSettings = new SettingValues();
 
     //Setting list
     public static bool settingListInitialized = false;
-    public static List<SValue> settingList;
+    public static List<SValue> settingList = new List<SValue>();
 
     //Data tracker data
-    public static PerformanceDataContainer currentSettingPerformance;
-    public static PerformanceDataContainer testSettingPerformance;
-
+    public static PerformanceDataContainer currentSettingPerformance = new PerformanceDataContainer();
+    public static PerformanceDataContainer testSettingPerformance = new PerformanceDataContainer();
+    public static string fileLocation = "Assets/";
 }
 
 public class PerformanceOptimizationHandler : MonoBehaviour
@@ -113,7 +113,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         {
             if (useGameSettings)
             {
-                TempSetPriorities();
+                TempSetPriorityValues();
                 AddSettings();
             }
             SortSettings();
@@ -138,7 +138,9 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
                 if (PerformanceData.testingStage == 0)//Test default settings
                 {
-                    dataTracker.StoreData(PerformanceData.currentSettingPerformance);
+                    Debug.Log("Store data");
+                    dataTracker.StoreData(ref PerformanceData.currentSettingPerformance);
+                    dataTracker.StoreResultsToFile("Default settings", PerformanceData.currentSettingPerformance, false);
 
                     if (!CheckForBadPerformance(PerformanceData.currentSettingPerformance))
                     {
@@ -146,11 +148,11 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                         PerformanceData.testingStage = -1;
                     }
                     else
-                    { 
+                    {
                         PerformanceData.testingStage = 1;
-
+                        StartInvidualSettingTest();
                     }
-                        
+
                 }
 
                 else if (PerformanceData.testingStage == 1)//Test invidual settings
@@ -166,7 +168,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                     }
                 }
 
-                if(PerformanceData.testingStage == -1)//End testing
+                if (PerformanceData.testingStage == -1)//End testing
                 {
                     PerformanceData.testStarted = false;
                     SceneManager.LoadScene(menuSceneName);
@@ -215,19 +217,19 @@ public class PerformanceOptimizationHandler : MonoBehaviour
             settingList[i].combinedImpact = settingList[i].pImpact - settingList[i].gImpact;
 
         //Sort the list in order based on priority so that the values with the highest priorities are first
-        settingList.Sort(delegate(SValue p_x, SValue p_y)
+        settingList.Sort(delegate (SValue p_x, SValue p_y)
         {
-            int t_xImpact = p_x.pImpact - p_x.gImpact;
-            int t_yImpact = p_y.pImpact - p_y.gImpact;
+            int t_xImpact = p_x.pImpact - p_x.gImpact - p_x.timesChanged * p_x.adjustImpact;
+            int t_yImpact = p_y.pImpact - p_y.gImpact - p_y.timesChanged * p_y.adjustImpact;
 
             if (p_x.combinedImpact > p_y.combinedImpact)
                 return -1;
             else if (p_x.combinedImpact < p_y.combinedImpact)
                 return 1;
-            else if(t_xImpact == t_yImpact)
+            else if (t_xImpact == t_yImpact)
             {
                 //If the combined priorities are the same, sort based on the favored impact type
-                if(favorGraphics)
+                if (favorGraphics)
                 {
                     if (p_x.gImpact > p_y.gImpact)
                         return -1;
@@ -241,7 +243,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                     else
                         return 1;
                 }
-            }    
+            }
             return 0;
         });
     }
@@ -266,7 +268,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         return false;
     }
 
-    void TempSetPriorities()
+    void TempSetPriorityValues()
     {
         //fullscreen
         graphics.settingValues.fullScreen.use = false;
@@ -274,64 +276,39 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         //v-synch
         graphics.settingValues.vSynch.pImpact = 1;
         graphics.settingValues.vSynch.gImpact = 2;
+        graphics.settingValues.vSynch.adjustImpact = 0;
 
         //resolution
         graphics.settingValues.resolutionIndex.pImpact = 2;
         graphics.settingValues.resolutionIndex.gImpact = 5;
+        graphics.settingValues.resolutionIndex.adjustImpact = 1;
 
         //texture quality
         graphics.settingValues.textureQuality.pImpact = 3;
         graphics.settingValues.textureQuality.gImpact = 5;
+        graphics.settingValues.textureQuality.adjustImpact = 1;
 
         //antialiazing method
         graphics.settingValues.aaMethod.pImpact = 4;
         graphics.settingValues.aaMethod.gImpact = 4;
+        graphics.settingValues.aaMethod.adjustImpact = 1;
 
         //antialiazing quality
         graphics.settingValues.aaQuality.pImpact = 4;
         graphics.settingValues.aaQuality.gImpact = 4;
+        graphics.settingValues.aaQuality.adjustImpact = 1;
 
         //shadow quality
         graphics.settingValues.shadowQuality.pImpact = 4;
         graphics.settingValues.shadowQuality.gImpact = 3;
+        graphics.settingValues.shadowQuality.adjustImpact = 1;
 
         //shadow distance
         graphics.settingValues.shadowDistance.pImpact = 5;
         graphics.settingValues.shadowDistance.gImpact = 3;
+        graphics.settingValues.shadowDistance.changeAmount = 10;
+        graphics.settingValues.shadowDistance.adjustImpact = 1;
     }
-
-    void ApplySettings(int p_index)
-    {
-        SValue t_value = PerformanceData.settingList[PerformanceData.currentSettingIndex];
-
-        if (t_value.id == fullScreen.id)
-            fullScreen.bvalue = new SValue(t_value);
-
-        if (t_value.id == vSynch.id)
-            vSynch.bvalue = t_value.bvalue;
-
-                if(t_value.id == resolutionIndex.id)
-
-        switch (t_value.id)
-        {
-            case fullScreen.id:
-
-                break;
-
-
-        }
-
-    public SValue fullScreen;
-    public SValue vSynch;//values 0-4
-    public SValue resolutionIndex;
-
-    public SValue textureQuality;//values 0-3
-    public SValue aaMethod;//values 0-2
-    public SValue aaQuality; //values 0-2
-    public SValue shadowQuality; //values 0-2
-    public SValue shadowDistance;
-
-}
 
     public void StartPerformanceTest()
     {
@@ -356,12 +333,64 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         //Initialize values
         if (PerformanceData.currentSettingIndex < PerformanceData.settingList.Count)
         {
-            ApplySettings(PerformanceData.currentSettingIndex);
+            ChangeSetting(PerformanceData.currentSettingIndex, ref PerformanceData.currentSettings);
+            PerformanceData.testingStage = 1;
             SceneManager.LoadScene(testSceneName);
         }
         else
-            PerformanceData.testingStage = 1;
+            PerformanceData.testingStage = -1;
         
+    }
+
+    void ChangeSetting(int p_index, ref SettingValues p_settings)
+    {
+        SValue t_value = PerformanceData.settingList[PerformanceData.currentSettingIndex];
+        Debug.Log("Change" + t_value.id);
+
+        if (t_value.id == p_settings.fullScreen.id)
+        {
+            //Fullscreen
+            t_value.ReduceValue();
+            p_settings.fullScreen = t_value;
+        }
+        else if (t_value.id == p_settings.vSynch.id)
+        {
+            //V-synch
+            t_value.ReduceValue();
+            p_settings.vSynch = t_value;
+        }
+        else if (t_value.id == p_settings.resolutionIndex.id)
+        {
+            //Resolution index
+            t_value.ReduceValue();
+            p_settings.resolutionIndex = t_value;
+        }
+        else if (t_value.id == p_settings.textureQuality.id)
+        {
+            //Texture quality
+            t_value.ReduceValue();
+            p_settings.textureQuality = t_value;
+        }
+        else if (t_value.id == p_settings.aaMethod.id)
+        {
+            //Antialiazing method
+            t_value.ReduceValue();
+            p_settings.aaMethod = t_value;
+        }        
+        else if (t_value.id == p_settings.shadowQuality.id)
+        {
+            //Shadow quality
+            t_value.ReduceValue();
+            p_settings.shadowQuality = t_value;
+        }        
+        else if (t_value.id == p_settings.shadowDistance.id)
+        {
+            //Shadow distance
+            t_value.ReduceValue();
+            p_settings.shadowDistance = t_value;
+        }
+
+        graphics.ChangeSettingValues(p_settings);
     }
 
     void InitPerformanceDataAwake()
@@ -387,7 +416,5 @@ public class PerformanceOptimizationHandler : MonoBehaviour
             settingList = new List<SValue>(PerformanceData.settingList);
         }
     }
-
-
-
 }
+
