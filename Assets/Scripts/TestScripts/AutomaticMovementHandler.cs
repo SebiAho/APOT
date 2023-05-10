@@ -49,6 +49,11 @@ public class AutomaticMovementHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(ABOTData.testStarted)
+        {
+            moveDelay = ABOTData.delayTime;
+        }
+
         if (mainHandler)
             HandlerInitStart();
     }

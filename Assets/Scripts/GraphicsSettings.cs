@@ -148,12 +148,12 @@ public class GraphicsSettings : MonoBehaviour
     public List<UniversalRenderPipelineAsset> urpAssets = new List<UniversalRenderPipelineAsset>();
     UniversalRenderPipelineAsset mainAsset;
 
-    public SettingValues settingValues;
+    public SettingValues settingValues = new SettingValues();
     public Resolution[] resolutions;
     public List<SettingValues> presets = new List<SettingValues>();
 
-    [Tooltip("If needed for debugging purposes disable to stop the initialization of unity settings using the values stored in the settingValues variable")]
-    public bool initSettings = true;
+    [Tooltip("Apply settings when the class is initialized, if false the current settings will still be stored into settingValues, but not have their effect applied")]
+    public bool applySettings = true;
 
     private void Awake()
     {
@@ -171,15 +171,22 @@ public class GraphicsSettings : MonoBehaviour
         presets.Add(new SettingValues("High", false, 3, 3, 3, 2, 1, 2, 250));
         presets.Add(new SettingValues("Very High", false, 4, 4, 3, 2, 2, 2, 500));
 
-        if (initSettings)
+        if (!ABOTData.loadGSettings)
         {
-            if (PerformanceData.initData)
-                ChangeSettingValues(PerformanceData.currentSettings);
-            else
-                ChangeSettingValues(presets[3]);
+            settingValues = presets[3];
+            ABOTData.currentSettings = settingValues;
+            ABOTData.applySettings = applySettings;
+
+            ABOTData.loadGSettings = true;
         }
         else
-            PerformanceData.currentSettings = settingValues;
+        {
+            settingValues = ABOTData.currentSettings;
+            applySettings = ABOTData.applySettings;
+        }
+
+        if (applySettings)
+            ChangeSettingValues(settingValues);
     }
 
     // Start is called before the first frame update
@@ -194,8 +201,14 @@ public class GraphicsSettings : MonoBehaviour
         
     }
 
+    public void ChangeSettingValues(SettingValues p_values)
+    {
+        settingValues = p_values;
+        ABOTData.currentSettings = p_values;
+    }
+
     //Change the program setting values to the ones stored in the settingValues variable;
-    void ChangeSettingValues()
+    void ApplySettingValues()
     {
         SetShadowQuality(settingValues.shadowQuality.ivalue);//Set shadow quality first as it changes the main asset
 
@@ -206,6 +219,13 @@ public class GraphicsSettings : MonoBehaviour
         SetAntialiazingMethod(settingValues.aaMethod.ivalue);
         SetAntialiazingQuality(settingValues.aaQuality.ivalue);
         SetShadowDistance(settingValues.shadowDistance.ivalue);
+    }
+
+    //Add new values ti the settingValues variable and use them to change the program setting values 
+    public void ApplySettingValues(SettingValues p_values)
+    {
+        ChangeSettingValues(p_values);
+        ApplySettingValues();
     }
 
     //Sets the id values for setting list
@@ -220,20 +240,13 @@ public class GraphicsSettings : MonoBehaviour
         p_settings.shadowDistance.id = "sDist";
     }
 
-    //Add new values ti the settingValues variable and use them to change the program setting values 
-    public void ChangeSettingValues(SettingValues p_values)
-    {
-        settingValues = p_values;
-        ChangeSettingValues();
-    }
-
-    public void SetFullscreen(bool useFullscreen)
+    void SetFullscreen(bool useFullscreen)
     {
         Screen.fullScreen = useFullscreen;
     }
 
     //Set the V-sync count, value must be either 0, 1, 2, 3 or 4 with 0 disbaling the v-synch
-    public void SetVsynch(int p_vSynchCount)
+    void SetVsynch(int p_vSynchCount)
     {
         if (p_vSynchCount > 4)
             QualitySettings.vSyncCount = 4;
@@ -242,7 +255,7 @@ public class GraphicsSettings : MonoBehaviour
     }
 
     //Set a new resolution value to the game
-    public void SetResolution(int p_index)
+    void SetResolution(int p_index)
     {
         if (settingValues.resolutionIndex.ivalue > resolutions.Length)
             settingValues.resolutionIndex.ivalue = resolutions.Length - 1;
@@ -250,7 +263,7 @@ public class GraphicsSettings : MonoBehaviour
         Screen.SetResolution(resolutions[p_index].width, resolutions[p_index].height, Screen.fullScreen);
     }
 
-    public void SetTextureQuality(int p_quality)
+    void SetTextureQuality(int p_quality)
     {
         //Note that the values are reversed to keep them consistent with the other settings, because otherwise the higher values would result in lower quality
         if (p_quality > 3)
@@ -259,7 +272,7 @@ public class GraphicsSettings : MonoBehaviour
             QualitySettings.masterTextureLimit = 3 - p_quality;
     }
 
-    public void SetAntialiazingMethod(int p_method)
+    void SetAntialiazingMethod(int p_method)
     {
         if (p_method == 0)
             mainCamera.antialiasing = AntialiasingMode.None;
@@ -269,7 +282,7 @@ public class GraphicsSettings : MonoBehaviour
             mainCamera.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
     }
 
-    public void SetAntialiazingQuality(int p_quality)
+    void SetAntialiazingQuality(int p_quality)
     {
         if (p_quality == 0)
             mainCamera.antialiasingQuality = AntialiasingQuality.Low;
@@ -279,7 +292,7 @@ public class GraphicsSettings : MonoBehaviour
             mainCamera.antialiasingQuality = AntialiasingQuality.High;
     }
 
-    public void SetShadowQuality(int p_quality)
+    void SetShadowQuality(int p_quality)
     {
         if(p_quality == 0)//None
             mainAsset = urpAssets[0];
@@ -295,7 +308,7 @@ public class GraphicsSettings : MonoBehaviour
         QualitySettings.renderPipeline = mainAsset;
     }
 
-    public void SetShadowDistance(float p_distance)
+    void SetShadowDistance(float p_distance)
     {
         mainAsset.shadowDistance = p_distance;
     }

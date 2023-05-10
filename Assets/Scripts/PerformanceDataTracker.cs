@@ -53,6 +53,23 @@ public class PerformanceDataTracker : MonoBehaviour
 
     private void Awake()
     {
+        if(!ABOTData.loadPDTSettings)
+        {
+            
+
+            ABOTData.loadPDTSettings = true;
+        }
+        else
+        {
+
+        }
+
+        if(ABOTData.testStarted)
+        {
+            targetFPS = ABOTData.targetFPS;
+            delayDataTracking = ABOTData.delayTime;
+        }    
+
         //delayTracking
         if (delayDataTracking > 0)
             startTracking = false;
@@ -71,7 +88,7 @@ public class PerformanceDataTracker : MonoBehaviour
     {
         //StoreResultsToFile("test", data, true);
         Debug.Log("Tracker target fps: " + targetFPS);
-        Debug.Log("Data store target fps: " + PerformanceData.targetFPS);
+        Debug.Log("Data store target fps: " + ABOTData.targetFPS);
     }
 
     // Update is called once per frame

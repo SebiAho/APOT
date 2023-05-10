@@ -21,8 +21,13 @@ public class SceneModeHandler : MonoBehaviour
             sceneMode = -1;
         else
         {
-            if (useStoredValue)
-                sceneMode = PerformanceData.sceneMode;
+            if (!ABOTData.loadSMHSettings)
+            {
+                ABOTData.sceneMode = sceneMode;
+                ABOTData.loadSMHSettings = true;
+            }
+            else
+                sceneMode = ABOTData.sceneMode;
 
             foreach (GameObject i in modeObjects)
                 i.SetActive(false);

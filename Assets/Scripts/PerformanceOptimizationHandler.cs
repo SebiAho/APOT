@@ -3,36 +3,45 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public static class PerformanceData
+public static class ABOTData
 {
-    public static bool initData = false;//If true initializes data using values stored in this class, Set true in the StartPerformanceTest() function, Note that there are no parts in the code that set it back to false 
-
-    //Scene Settings
+    //Scene Mode Handler
+    public static bool loadSMHSettings = false;
     public static int sceneMode = -1;//The mode a scene will use, -1 = SceneModeHandler disbaled, 0 = default, 1 = perfromance test
-    public static string menuSceneName;
-    public static string testSceneName; 
 
-    //ABOT Settings
-    public static int targetFPS;
-    public static bool useGameSettings = false;
-    public static float delayTime;//The time used to delay performance test
-    public static bool testStarted = false;
-    public static float maxTimeBelowTarget = 0;
-    public static bool startSettingOptimization = false;
-    public static int testingStage = 0; //Current testing state, 0 = current settings, 1 = Invidual setting testing, -1 = end the test
+    //Performance Optimization Handler
+    public static bool loadPOHSettings = false;
+    public static string menuSceneName;
+    public static string testSceneName;
+
+    public static bool autoFillSettingList = false;
+    public static List<SValue> settingList = new List<SValue>();
     public static int currentSettingIndex = 0;//Index of the setting in settingList that is currently being checked
 
-    //Current settings
-    public static SettingValues currentSettings = new SettingValues();
+    public static int testingStage = 0; //Current testing state, 0 = current settings, 1 = Invidual setting testing, -1 = end the test
+    public static float maxAllowedTimeBelowTargetFPS = 0;
 
-    //Setting list
-    public static bool settingListInitialized = false;
-    public static List<SValue> settingList = new List<SValue>();
-
-    //Data tracker data
+    //Performance Data Tracker
+    public static bool loadPDTSettings = false;
+    public static PerformanceDataContainer defaultSettingPerformance = new PerformanceDataContainer();
     public static PerformanceDataContainer currentSettingPerformance = new PerformanceDataContainer();
-    public static PerformanceDataContainer testSettingPerformance = new PerformanceDataContainer();
     public static string fileLocation = "Assets/";
+
+    //Performance Data Display
+    public static bool loadPDDSettings = false;
+
+    //Graphics settings
+    public static bool loadGSettings = false;
+    public static SettingValues currentSettings = new SettingValues();
+    public static bool applySettings = true;
+
+    //Various
+    public static int targetFPS = 60; //The fps value test/optimization is tageted against, set by PerformanceOptimizationHandler and used if the testStarted == true
+    public static float delayTime;//The time used to delay performance test, set by PerformanceOptimizationHandler and used if the testStarted == true
+
+    //Do not init at Awake/Start!!!
+    public static bool testStarted = false;//Tells systems if a perfromance test has been started, set by PerformanceOptimizationHandler
+    public static bool adjustSettings = false; //Tells systems to adjust graphics settings, set by PerformanceOptimizationHandler
 }
 
 public class PerformanceOptimizationHandler : MonoBehaviour
@@ -44,8 +53,8 @@ public class PerformanceOptimizationHandler : MonoBehaviour
     [Tooltip("The frame rate that the system aims optain")]
     public int targetFPS = 60;
 
-    [Tooltip("If true the handler will add the ingame settings to the game, if false the developer needs to add the settings separately")]
-    public bool useGameSettings = true;
+    [Tooltip("If true the handler will automatically add the ingame settings to SettingList, if false the developer needs to add the settings separately")]
+    public bool autoFillSettingList = true;
     [Tooltip("List of graphics settings. it is possible to give a single setting multiple values which will be evaluated separately based on their priority. Note changes to the list after starting the program have no effect ")]
     public List<SValue> settingList = new List<SValue>();
     [Tooltip("If the the combined priorities are the same, sort based on the favored impact type")]
@@ -62,14 +71,10 @@ public class PerformanceOptimizationHandler : MonoBehaviour
     [Header("Test logic")]
     [Tooltip("The max time(in percentages) that the frame rate can stay below target fps for it to be conisdered acceptaple")]
     [Range(0, 100)]
-    public float maxTimeBelowTarget = 0;
-
-    int settingIndex = 0; //Index use to the the setting list
-    bool testingEnabled = false;
+    public float maxAllowedTimeBelowTargetFPS = 0;
 
     /*
      * How does the test work?
-     * if perfromance
      * 
      * To get setting priorities
      * 1. Get baseline
@@ -85,10 +90,31 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
     private void Awake()
     {
+        if(!ABOTData.loadPOHSettings)
+        {
+            ABOTData.targetFPS = targetFPS;
+            ABOTData.delayTime = delayTest;
+
+            ABOTData.menuSceneName = menuSceneName;
+            ABOTData.testSceneName = testSceneName;
+
+            ABOTData.maxAllowedTimeBelowTargetFPS = maxAllowedTimeBelowTargetFPS;
+
+            ABOTData.autoFillSettingList = autoFillSettingList;
+        }
+        else
+        {
+            targetFPS = ABOTData.targetFPS;
+            delayTest = ABOTData.delayTime;
+
+            menuSceneName = ABOTData.menuSceneName;
+            testSceneName = ABOTData.testSceneName;
+
+            autoFillSettingList = ABOTData.autoFillSettingList;
+        }
+
         if (dataTracker == null)
             dataTracker = GetComponent<PerformanceDataTracker>();
-
-        InitPerformanceDataAwake();
 
         //Performance testing
         if (dataTracker == null)
@@ -96,30 +122,28 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
         if (movementHandler == null)
             movementHandler = GetComponent<AutomaticMovementHandler>();
-
-        if (dataTracker != null && movementHandler != null)
-        {
-            testingEnabled = true;
-            dataTracker.delayDataTracking = delayTest;
-            movementHandler.moveDelay = delayTest;
-            dataTracker.targetFPS = targetFPS;
-        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        if (!PerformanceData.initData)
+        if(!ABOTData.loadPOHSettings)
         {
-            if (useGameSettings)
+            if (autoFillSettingList)
             {
-                TempSetPriorityValues();
-                AddSettings();
+                AutoFillSettingList();
             }
             SortSettings();
+
+            ABOTData.settingList = settingList;
+
+            ABOTData.loadPOHSettings = true;
         }
         else
-            InitPerformanceDataStart();
+        {
+            settingList.Clear();
+            settingList = ABOTData.settingList;
+        }
     }
 
     // Update is called once per frame
@@ -131,84 +155,78 @@ public class PerformanceOptimizationHandler : MonoBehaviour
     void LateUpdate()
     {
         //Optimize perfromance
-        if (testingEnabled && PerformanceData.testStarted)
+        if (ABOTData.testStarted)
         {
             if (movementHandler.getMovementFinished())
             {
 
-                if (PerformanceData.testingStage == 0)//Test default settings
+                if (ABOTData.testingStage == 0)//Test default settings
                 {
-                    Debug.Log("Store data");
-                    dataTracker.StoreData(ref PerformanceData.currentSettingPerformance);
-                    dataTracker.StoreResultsToFile("Default settings", PerformanceData.currentSettingPerformance, false);
-
-                    if (!CheckForBadPerformance(PerformanceData.currentSettingPerformance))
+                    if(PerfromanceTest(ref ABOTData.defaultSettingPerformance, "Default settings:", false))
                     {
-                        Debug.Log("No perfromance problems");
-                        PerformanceData.testingStage = -1;
+                        //Bad perfromance detected
+                        if (ChangeSetting(ref ABOTData.currentSettings))
+                        {
+                            ABOTData.adjustSettings = true;
+                            ABOTData.testingStage = 1;
+                        }
+                        else
+                            ABOTData.testingStage = 2;
                     }
                     else
                     {
-                        PerformanceData.testingStage = 1;
+                        //No bad performance detected
+                        ABOTData.testingStage = -1;
+                    }
+
+                    if (!CheckForBadPerformance(ABOTData.currentSettingPerformance))
+                    {
+
+                    }
+                    else
+                    {
                         StartInvidualSettingTest();
                     }
 
                 }
 
-                else if (PerformanceData.testingStage == 1)//Test invidual settings
+                else if (ABOTData.testingStage == 1)//Test invidual settings
                 {
                     if (!CheckForBadPerformance(dataTracker.data))
-                        PerformanceData.testingStage = -1;
+                        ABOTData.testingStage = -1;
 
-                    if (settingIndex >= settingList.Count)
-                        PerformanceData.testingStage = -1;
+                    if (ABOTData.currentSettingIndex >= settingList.Count)
+                        ABOTData.testingStage = -1;
                     else
                     {
 
                     }
                 }
 
-                if (PerformanceData.testingStage == -1)//End testing
+                if (ABOTData.testingStage == -1)//End testing
                 {
-                    PerformanceData.testStarted = false;
+                    ABOTData.testStarted = false;
                     SceneManager.LoadScene(menuSceneName);
                 }
             }
         }
     }
 
-
-    void AddSettings()
+    bool PerfromanceTest(ref PerformanceDataContainer p_data, string p_testName, bool p_append = true)
     {
-        //If static perfromance list is initialized get settings from there
-        if (PerformanceData.settingListInitialized)
-        {
-            settingList.Clear();
-            settingList = new List<SValue>(PerformanceData.settingList);
-        }
+        //Check for bad berformance
+        bool t_badPerformance = CheckForBadPerformance(p_data);
 
-        //Use setting stored int settingList
-        if (useGameSettings && !PerformanceData.settingListInitialized)
-        {
-            settingList.Clear();
+        if(t_badPerformance)
+            Debug.Log("Perfromance proplems found");
+        else
+            Debug.Log("No perfromance problems");
 
-            //Add settings
-            settingList.Add(graphics.settingValues.fullScreen);
-            settingList.Add(graphics.settingValues.vSynch);
-            settingList.Add(graphics.settingValues.resolutionIndex);
-            settingList.Add(graphics.settingValues.textureQuality);
-            settingList.Add(graphics.settingValues.aaMethod);
-            settingList.Add(graphics.settingValues.aaQuality);
-            settingList.Add(graphics.settingValues.shadowQuality);
-            settingList.Add(graphics.settingValues.shadowDistance);
-        }
+        //Store data to static class and file
+        dataTracker.StoreData(ref p_data);
+        dataTracker.StoreResultsToFile(p_testName, p_data, p_append);
 
-        //Initialize static setting list
-        if (!PerformanceData.settingListInitialized)
-        {
-            PerformanceData.settingList = new List<SValue>(settingList);
-            PerformanceData.settingListInitialized = true;
-        }
+        return t_badPerformance;
     }
 
     void SortSettings()
@@ -261,15 +279,29 @@ public class PerformanceOptimizationHandler : MonoBehaviour
             float t_percent = p_data.timeUnderTargetFPS / p_data.testTime * 100;
             Debug.Log("Time spend below target FPS: " + t_percent.ToString());
 
-            if (t_percent > maxTimeBelowTarget)
+            if (t_percent > maxAllowedTimeBelowTargetFPS)
                 return true;
         }
 
         return false;
     }
 
-    void TempSetPriorityValues()
+    void AutoFillSettingList()
     {
+        //Auto add settings
+        settingList.Clear();
+
+        //Add settings
+        settingList.Add(graphics.settingValues.fullScreen);
+        settingList.Add(graphics.settingValues.vSynch);
+        settingList.Add(graphics.settingValues.resolutionIndex);
+        settingList.Add(graphics.settingValues.textureQuality);
+        settingList.Add(graphics.settingValues.aaMethod);
+        settingList.Add(graphics.settingValues.aaQuality);
+        settingList.Add(graphics.settingValues.shadowQuality);
+        settingList.Add(graphics.settingValues.shadowDistance);
+
+        //Auto fill priorities
         //fullscreen
         graphics.settingValues.fullScreen.use = false;
 
@@ -312,39 +344,36 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
     public void StartPerformanceTest()
     {
-        //Initialize values
-        PerformanceData.useGameSettings = useGameSettings;
-        PerformanceData.testStarted = true;
-        PerformanceData.delayTime = delayTest;
-        PerformanceData.menuSceneName = menuSceneName;
-        PerformanceData.testSceneName = testSceneName;
-        PerformanceData.currentSettings = graphics.settingValues;
-        PerformanceData.testingStage = 0;
-        PerformanceData.currentSettingIndex = 0;
+        ABOTData.testStarted = true;
 
-        //Start test
-        PerformanceData.initData = true;
-        PerformanceData.sceneMode = 1; //Note that the ScenModeHandler will automatically get this value
+        //Initialize values
+        graphics.ApplySettingValues(ABOTData.currentSettings);
+        ABOTData.testingStage = 0;
+        ABOTData.currentSettingIndex = 0;
+
+        ABOTData.sceneMode = 1;
+        ABOTData.loadSMHSettings = true;//Ensure that SceneModeHandler uses data from ABOTData class
+
         SceneManager.LoadScene(testSceneName);
     }
 
     void StartInvidualSettingTest()
     {
         //Initialize values
-        if (PerformanceData.currentSettingIndex < PerformanceData.settingList.Count)
+        if (ABOTData.currentSettingIndex < ABOTData.settingList.Count)
         {
-            ChangeSetting(PerformanceData.currentSettingIndex, ref PerformanceData.currentSettings);
-            PerformanceData.testingStage = 1;
             SceneManager.LoadScene(testSceneName);
         }
         else
-            PerformanceData.testingStage = -1;
+            ABOTData.testingStage = -1;
         
     }
 
-    void ChangeSetting(int p_index, ref SettingValues p_settings)
+    bool ChangeSetting(ref SettingValues p_settings)
     {
-        SValue t_value = PerformanceData.settingList[PerformanceData.currentSettingIndex];
+        bool t_success = false;
+
+        SValue t_value = ABOTData.settingList[ABOTData.currentSettingIndex];
         Debug.Log("Change" + t_value.id);
 
         if (t_value.id == p_settings.fullScreen.id)
@@ -390,31 +419,50 @@ public class PerformanceOptimizationHandler : MonoBehaviour
             p_settings.shadowDistance = t_value;
         }
 
-        graphics.ChangeSettingValues(p_settings);
+        graphics.ApplySettingValues(p_settings);
+
+        return t_success;
     }
 
-    void InitPerformanceDataAwake()
+    //Returns false if no setting in the list is valid
+    bool FindValidSetting()
     {
-        if(PerformanceData.initData)
+        SValue t_setting;
+        bool t_settingValid = false;
+        for (int i = 0; i < settingList.Count; i++)
         {
-            targetFPS = PerformanceData.targetFPS; //Debug.Log("Target fps: " + PerfromanceData.targetFPS);
-            maxTimeBelowTarget = PerformanceData.maxTimeBelowTarget;
+            t_setting = settingList[ABOTData.currentSettingIndex];
+
+            //Check if setting is valid
+            if(!t_setting.use)
+            {
+                if(t_setting.valueType == 0 && (t_setting.ivalue - (int)t_setting.changeAmount) >= t_setting.minValue)
+                {
+
+                    t_settingValid = true;
+                }
+                else if(t_setting.valueType == 1 && (t_setting.fvalue - t_setting.changeAmount) >= t_setting.minValue)
+                {
+                    t_settingValid = true;
+                }
+                else if(t_setting.valueType == 2 && !t_setting.bvalue)
+                {
+                    t_settingValid = true;
+                }
+            }
+
+            if(t_settingValid)
+            {
+                break;
+            }
+            else
+            {
+                ABOTData.currentSettingIndex++;
+            }
+
         }
 
-        if(PerformanceData.testStarted)
-        {
-            delayTest = PerformanceData.delayTime;
-            menuSceneName = PerformanceData.menuSceneName;
-            testSceneName = PerformanceData.testSceneName;            
-        }
-    }
-
-    void InitPerformanceDataStart()
-    {
-        if (PerformanceData.initData)
-        {
-            settingList = new List<SValue>(PerformanceData.settingList);
-        }
+        return t_settingValid;
     }
 }
 

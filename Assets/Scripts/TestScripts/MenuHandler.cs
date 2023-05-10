@@ -9,6 +9,9 @@ public class MenuHandler : MonoBehaviour
     //MAKE SURE THAT THERE IS AN ACTIVE EVENT HANDLER AT THE SCENE!!!
     
     public GameObject currentMenu;
+    public List<GameObject> menuList = new List<GameObject>();
+
+    public GameObject mainMenu;
 
     [Header("ABOT Menu")]
     public PerformanceOptimizationHandler abot;
@@ -38,6 +41,19 @@ public class MenuHandler : MonoBehaviour
 
     private void Start()
     {
+        //Find the currently active menu and set it as current
+        bool t_deactivate = false;
+        for(int i = 0; i<menuList.Count; i++)
+        {
+            if (menuList[i].activeSelf && !t_deactivate)
+            {
+                currentMenu = menuList[i];
+                t_deactivate = true;
+            }
+            else
+                menuList[i].SetActive(false);
+        }
+
         //Graphics settings
         if (graphics != null)
         {
@@ -123,7 +139,8 @@ public class MenuHandler : MonoBehaviour
 
     public void ButtonSetMode(int p_mode)
     {
-        PerformanceData.sceneMode = p_mode;
+        ABOTData.sceneMode = p_mode;
+        ABOTData.loadSMHSettings = true;
     }
 
     //Set object inactive if it is active and active if it isin't
@@ -174,48 +191,52 @@ public class MenuHandler : MonoBehaviour
 
     public void ButtonSetFullScreen()
     {
-        graphics.SetFullscreen(fullscreen.isOn);
+        graphics.settingValues.fullScreen.bvalue = fullscreen.isOn;
     }
 
     public void ButtonSetVSynch()
     {
-        graphics.SetVsynch((int)vSynch.value);
+        graphics.settingValues.vSynch.ivalue = (int)vSynch.value;
     }
 
     public void ButtonSetResolution()
     {
-        graphics.SetResolution(resolution.value);
+        graphics.settingValues.resolutionIndex.ivalue = resolution.value;
     }
 
     public void ButtonSetTextureQuality()
     {
-        graphics.SetTextureQuality(textureQuality.value);
+        graphics.settingValues.textureQuality.ivalue = textureQuality.value;
     }
 
     public void ButtonSetAAMethod()
     {
-        graphics.SetAntialiazingMethod(antialiazingMethod.value);
+        graphics.settingValues.aaMethod.ivalue = antialiazingMethod.value;
     }
 
     public void ButtonSetAAQuality()
     {
-        graphics.SetAntialiazingQuality(antialiazingQuality.value);
+        graphics.settingValues.aaQuality.ivalue = antialiazingQuality.value;
     }
 
     public void ButtonSetShadowQuality()
     {
-        graphics.SetShadowQuality(shadowQuality.value);
+        graphics.settingValues.shadowQuality.ivalue = shadowQuality.value;
     }
 
     public void ButtonSetShadowDistance()
     {
-        graphics.SetShadowDistance(shadowDistance.value);
+        graphics.settingValues.shadowDistance.fvalue = shadowDistance.value;
+    }
+
+    public void ButtonApplySettings()
+    {
+        graphics.ApplySettingValues(graphics.settingValues);
     }
 
     public void ButtonSetPreset()
     {
-        graphics.ChangeSettingValues(graphics.presets[presets.value]);
+        graphics.ApplySettingValues(graphics.presets[presets.value]);
         SetGraphicSettingsValues(graphics.settingValues);
     }
-
 }
