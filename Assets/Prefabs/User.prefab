@@ -339,6 +339,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentMenu: {fileID: 2075842357861792299}
+  menuList: []
+  mainMenu: {fileID: 0}
   abot: {fileID: 0}
   fpsInput: {fileID: 0}
   graphics: {fileID: 0}
@@ -417,8 +419,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     vSynch:
       id: 
       valueType: 0
@@ -431,8 +432,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     resolutionIndex:
       id: 
       valueType: 0
@@ -445,8 +445,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     textureQuality:
       id: 
       valueType: 0
@@ -459,8 +458,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     aaMethod:
       id: 
       valueType: 0
@@ -473,8 +471,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     aaQuality:
       id: 
       valueType: 0
@@ -487,8 +484,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     shadowQuality:
       id: 
       valueType: 0
@@ -501,8 +497,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     shadowDistance:
       id: 
       valueType: 0
@@ -515,10 +510,9 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
   presets: []
-  initSettings: 1
+  applySettings: 1
 --- !u!1 &2075842357861792299
 GameObject:
   m_ObjectHideFlags: 0
@@ -1265,13 +1259,13 @@ MonoBehaviour:
   movementHandler: {fileID: 5923236293390717495}
   graphics: {fileID: 9194557103464686394}
   targetFPS: 60
-  useGameSettings: 1
+  autoFillSettingList: 1
   settingList: []
   favorGraphics: 0
   testSceneName: TerrainDemoSceneABOTDev
   menuSceneName: MainMenu
   delayTest: 2
-  maxTimeBelowTarget: 0
+  maxAllowedTimeBelowTargetFPS: 20
 --- !u!114 &5923236292868263081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1337,8 +1331,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 60.647, y: 0}
-  m_SizeDelta: {x: 58.707, y: 449.86}
+  m_AnchoredPosition: {x: 60.647038, y: 0}
+  m_SizeDelta: {x: 58.706, y: 449.86}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5923236292933692844
 CanvasRenderer:
@@ -1383,6 +1377,11 @@ MonoBehaviour:
     0
 
     0
+
+    0
+
+
+    60
 
     0
 
@@ -1822,27 +1821,33 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'FPS
 
-    Test time:
+    Current test time:
+
+    Total test time:
 
     Current FPS:
 
-    Average FPS:
+    Average
+    FPS:
 
     Lowest FPS:
 
-    Highest
-    FPS:
+    Highest FPS:
 
     Lowest Average FPS:
 
-    Highest Average FPS:
+    Highest
+    Average FPS:
+
+
+    Target FPS:
 
     Time Under Target:
 
-    Time
-    Above Target:
+    Time Above Target:
 
-    Average Under FPS:
+    Average
+    Under FPS:
 
     Average Above FPS:'
   m_isRightToLeft: 0

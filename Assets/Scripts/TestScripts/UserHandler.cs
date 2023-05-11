@@ -113,7 +113,7 @@ public class UserHandler : MonoBehaviour
         if(autoMoveHandler != null)
             autoMoveHandler.HandlerInitStart();
         //UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
-        Debug.Log("Mode " + ABOTData.sceneMode);
+        //Debug.Log("Mode " + ABOTData.sceneMode);
     }
 
     // Update is called once per frame

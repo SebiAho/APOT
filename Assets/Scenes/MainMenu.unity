@@ -3405,8 +3405,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     vSynch:
       id: 
       valueType: 0
@@ -3419,8 +3418,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     resolutionIndex:
       id: 
       valueType: 0
@@ -3433,8 +3431,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     textureQuality:
       id: 
       valueType: 0
@@ -3447,8 +3444,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     aaMethod:
       id: 
       valueType: 0
@@ -3461,8 +3457,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     aaQuality:
       id: 
       valueType: 0
@@ -3475,8 +3470,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     shadowQuality:
       id: 
       valueType: 0
@@ -3489,8 +3483,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
     shadowDistance:
       id: 
       valueType: 0
@@ -3503,8 +3496,7 @@ MonoBehaviour:
       pImpact: 0
       gImpact: 0
       adjustImpact: 0
-      combinedImpact: 0
-      timesChanged: 0
+      timesSelected: 0
   presets: []
   applySettings: 1
 --- !u!4 &479545409
@@ -5391,14 +5383,14 @@ MonoBehaviour:
   dataTracker: {fileID: 840686540}
   movementHandler: {fileID: 0}
   graphics: {fileID: 479545408}
-  targetFPS: 60
+  targetFPS: 240
   autoFillSettingList: 1
   settingList: []
   favorGraphics: 0
   testSceneName: TerrainDemoSceneABOTDev
   menuSceneName: MainMenu
   delayTest: 3
-  maxAllowedTimeBelowTargetFPS: 0
+  maxAllowedTimeBelowTargetFPS: 20
 --- !u!114 &840686540
 MonoBehaviour:
   m_ObjectHideFlags: 0

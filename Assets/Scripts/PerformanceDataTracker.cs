@@ -87,8 +87,8 @@ public class PerformanceDataTracker : MonoBehaviour
     void Start()
     {
         //StoreResultsToFile("test", data, true);
-        Debug.Log("Tracker target fps: " + targetFPS);
-        Debug.Log("Data store target fps: " + ABOTData.targetFPS);
+        // Debug.Log("Tracker target fps: " + targetFPS);
+        //Debug.Log("Data store target fps: " + ABOTData.targetFPS);
     }
 
     // Update is called once per frame
@@ -249,6 +249,37 @@ public class PerformanceDataTracker : MonoBehaviour
             "Average under target frame rate:" + p_data.averageUnderTargetFPS + '\n' +
             "Time above target frame rate:" + p_data.timeAboveTargetFPS + '\n' +
             "Average above target frame rate:" + p_data.averageAboveTargetFPS + '\n' + '\n';
+
+        t_file.WriteLine(t_text);
+        t_file.Close();
+    }
+
+    public void StoreResultsToFile(string p_testName, PerformanceDataContainer p_data, bool p_append, SettingValues p_values)
+    {
+        StreamWriter t_file = new StreamWriter(fileLocation + fileName, p_append);
+
+        string t_text = p_testName + '\n' +
+            "Time: " + System.DateTime.Now + '\n' +
+            '\n' +
+            "Time tested: " + p_data.testTime + '\n' +
+            "Lowest frame rate: " + p_data.lowestFrameRate + '\n' +
+            "Highest frame rate " + p_data.highestFrameRate + '\n' +
+            "Target frame rate: " + targetFPS + '\n' +
+            "Time under target frame rate:" + p_data.timeUnderTargetFPS + '\n' +
+            "Average under target frame rate:" + p_data.averageUnderTargetFPS + '\n' +
+            "Time above target frame rate:" + p_data.timeAboveTargetFPS + '\n' +
+            "Average above target frame rate:" + p_data.averageAboveTargetFPS + '\n' +
+            '\n' +
+            "Settings: " + '\n' +
+            "Fullscreen: " + p_values.fullScreen.bvalue + '\n' +
+            "V-Synch: " + p_values.vSynch.ivalue + '\n' +
+            "Resolution: " + p_values.resolutionIndex.ivalue + '\n' +
+            "Texture quality: " + p_values.textureQuality.ivalue + '\n' +
+            "Antialiazing method: " + p_values.aaMethod.ivalue + '\n' +
+            "Antialiazing quality: " + p_values.aaQuality.ivalue + '\n' +
+            "Shadow quality: " + p_values.shadowQuality.ivalue + '\n' +
+            "Shadow distance " + p_values.shadowDistance.fvalue + '\n' +
+            '\n';
 
         t_file.WriteLine(t_text);
         t_file.Close();

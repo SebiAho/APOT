@@ -131,7 +131,7 @@ public class AutomaticMovementHandler : MonoBehaviour
                     {
                         movementFinished = true;
                         autoMoveEnabled = false;
-                        Debug.Log("Movement finished");
+                        //Debug.Log("Movement finished");
                     }
                 }
 

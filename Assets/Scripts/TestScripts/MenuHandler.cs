@@ -54,6 +54,10 @@ public class MenuHandler : MonoBehaviour
                 menuList[i].SetActive(false);
         }
 
+        //ABOT settings
+        if (fpsInput != null)
+            fpsInput.text = ABOTData.targetFPS.ToString();
+
         //Graphics settings
         if (graphics != null)
         {

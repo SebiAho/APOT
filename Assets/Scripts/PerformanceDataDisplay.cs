@@ -12,6 +12,7 @@ public class PerformanceDataDisplay : MonoBehaviour
     private PerformanceDataContainer data;
 
     string dataValues;
+    float totalTimeSpendTesting = 0;
 
     private void Awake()
     {
@@ -28,26 +29,32 @@ public class PerformanceDataDisplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-        ConvertDataValuesToString();
-        valuesText.text = dataValues;
+        if (dataTracker.startTracking)
+        {
+            totalTimeSpendTesting = ABOTData.totalTimeSpendTesting + data.testTime;
+            ConvertDataValuesToString();
+            valuesText.text = dataValues;
+        }
     }
 
     void ConvertDataValuesToString()
     {
         dataValues = "\n" +
             data.testTime.ToString() + "\n" +
+            totalTimeSpendTesting + "\n" +
             data.currentFrameRate.ToString() + "\n" +
             data.averageFrameRate.ToString() + "\n" +
             data.lowestFrameRate.ToString() + "\n" +
             data.highestFrameRate.ToString() + "\n" +
             data.lowestAverageFrameRate.ToString() + "\n" +
             data.highestAverageFrameRate.ToString() + "\n" +
+            "\n" +
+            ABOTData.targetFPS.ToString() + "\n" +
             data.timeUnderTargetFPS.ToString() + "\n" +
             data.timeAboveTargetFPS.ToString() +"\n" +
             data.averageUnderTargetFPS.ToString() + "\n" +

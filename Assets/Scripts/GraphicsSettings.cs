@@ -51,53 +51,54 @@ public class SValue
 
     //Values
     [Tooltip("type of the value, 0 = int, 1 = float, 2 = bool")]
-    public int valueType;
-    public int ivalue;
-    public float fvalue;
-    public bool bvalue;
+    public int valueType = -1;
+    public int ivalue = 0;
+    public float fvalue = 0;
+    public bool bvalue = false;
 
     [Header("Perfromance optimization values")]
     [Tooltip("Use this setting in calculations")]
-    public bool use;
+    public bool use = true;
     [Tooltip("The amount this setting will be changed by the ChangeValue method")]
     public float changeAmount = 1;
     [Tooltip("The min amount the value can have")]
     public float minValue = 0;
 
     [Tooltip("The perfromance impact of the setting, settings with higher values are MORE likely to be selected")]
-    public int pImpact;
+    public int pImpact = 0;
     [Tooltip("The graphical impact of the setting, settings with higher values are LESS likely to be selected")]
-    public int gImpact;
+    public int gImpact = 0;
     [Tooltip("The value detracted from the impact each time the setting is modified, this is to prefent the repeated changes to the setting")]
     public int adjustImpact = 0;
-    [Tooltip("Set in the PerfromanceOptimizationHandler, equals pImpact - gImpact")]
-    public int combinedImpact;
     [Tooltip("Times the setting has been changed")]
-    public int timesChanged = 0;
+    public int timesSelected = 0;
 
     //Reduces the value based on the change amount, if the value type is bool it will only be changed to false if the change amount is creater than zero
-    public bool ReduceValue()
+    public void ReduceValue()
     {
-        if (valueType == 0 && (ivalue-(int)changeAmount) >= minValue)
-        {
+        if (valueType == 0)
             ivalue -= (int)changeAmount;
-            return true;
-        }
-        else if (valueType == 1 && (fvalue-changeAmount) >= minValue)
-        {
+        else if (valueType == 1)
             fvalue -= changeAmount;
-            return true;
-        }
-        else if (valueType == 2 && !bvalue)
+        else if (valueType == 2)
         {
             if (changeAmount > 0)
-            {
                 bvalue = false;
-                return true;
-            }
         }
+    }
 
-        return false;
+    //Raises the value based on the change amount, if the value type is bool it will only be changed to false if the change amount is creater than zero
+    public void RaiseValue()
+    {
+        if (valueType == 0)
+            ivalue += (int)changeAmount;
+        else if (valueType == 1)
+            fvalue += changeAmount;
+        else if (valueType == 2)
+        {
+            if (changeAmount > 0)
+                bvalue = true;
+        }
     }
 }
 
