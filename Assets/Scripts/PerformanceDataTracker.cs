@@ -32,7 +32,10 @@ public class PerformanceDataTracker : MonoBehaviour
     public float delayDataTracking = 0f;
     public bool startTracking { get; private set; } = true;
 
-     //Average fps calculation
+    //Frame rate
+    public float framerate = 0;
+
+    //Average fps calculation
     [Tooltip("Time frame the average fps is calculated, note that until the time frame has passed at least once, the averageFrameRate value will be 0")]
     public float averageFPSTimeFrame = 1f;
     float averageSum = 0f, elapsedAverageTime = 0f, averageFPS = 0f;
@@ -99,7 +102,8 @@ public class PerformanceDataTracker : MonoBehaviour
             data.testTime += Time.deltaTime;
 
             //FPS
-            data.currentFrameRate = trackFPS();
+            TrackFPS();
+            data.currentFrameRate = framerate;
             data.averageFrameRate = CalculateAverageFPS();
             HighestAndLowestFrameRateValues();
             PerfromanceTestCalculations();
@@ -114,9 +118,9 @@ public class PerformanceDataTracker : MonoBehaviour
         }
     }
 
-    private float trackFPS()
+    private void TrackFPS()
     {
-        return 1f / Time.unscaledDeltaTime;
+        framerate = 1f / Time.unscaledDeltaTime;
     }
 
     //Caluclate the average fps of a set time frame
@@ -125,7 +129,7 @@ public class PerformanceDataTracker : MonoBehaviour
         if(elapsedAverageTime < averageFPSTimeFrame)
         {
             elapsedAverageTime += Time.unscaledDeltaTime;
-            averageSum += trackFPS();
+            averageSum += framerate;
             averageIndex++;
             
         }

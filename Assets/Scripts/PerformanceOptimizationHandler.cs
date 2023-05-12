@@ -14,6 +14,7 @@ public static class ABOTData
     public static string menuSceneName;
     public static string testSceneName;
 
+    public static bool usePresets = true;//Use presets when doing performance optimization
     public static bool autoFillSettingList = false;
     public static List<SValue> settingList = new List<SValue>();
     public static int nextSettingIndex = 0;//Index of the setting that is next in line to be checked, not used if autoFillSettingList == true
@@ -35,6 +36,9 @@ public static class ABOTData
     public static SettingValues currentSettings = new SettingValues();
     public static bool applySettings = true;
 
+    public static List<SettingValues> presets = new List<SettingValues>();
+    public static int presetsIndex = 0;
+    public static bool useCustomPresets = false;//If false the system will use a list of preset presets
     //Various
     public static int targetFPS = 60; //The fps value test/optimization is tageted against, set by PerformanceOptimizationHandler and used if the testStarted == true
     public static float delayTime;//The time used to delay performance test, set by PerformanceOptimizationHandler and used if the testStarted == true
@@ -55,6 +59,8 @@ public class PerformanceOptimizationHandler : MonoBehaviour
     [Tooltip("The frame rate that the system aims optain")]
     public int targetFPS = 60;
 
+    [Tooltip("Use preset when doing perfromance optimization")]
+    public bool usePresets = true;
     [Tooltip("If true the handler will automatically add the ingame settings to SettingList and the system will use their change value to adjust them, if false the developer needs to add the settings separately")]
     public bool autoFillSettingList = true;
     [Tooltip("List of graphics settings. it is possible to give a single setting multiple values which will be evaluated separately based on their priority. Note changes to the list after starting the program have no effect ")]
@@ -103,6 +109,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
             ABOTData.maxAllowedTimeBelowTargetFPS = maxAllowedTimeBelowTargetFPS;
 
+            ABOTData.usePresets = usePresets;
             ABOTData.autoFillSettingList = autoFillSettingList;
         }
         else
@@ -115,6 +122,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
             maxAllowedTimeBelowTargetFPS = ABOTData.maxAllowedTimeBelowTargetFPS;
 
+            usePresets = ABOTData.usePresets;
             autoFillSettingList = ABOTData.autoFillSettingList;
         }
 
@@ -169,28 +177,47 @@ public class PerformanceOptimizationHandler : MonoBehaviour
             if (movementHandler.getMovementFinished())
             {
                 if (ABOTData.testingStage == 0)//Test default settings
-                {
-                    ABOTData.testNumber = 0;
-                    Debug.Log("Performance optimization started");
-                    Debug.Log("Test " + ABOTData.testNumber + ":" + "Testing default settings");
-
-                    //Store data to static class and file
+                {                    
+                    //Store test results to static class and file
                     dataTracker.StoreData(ref ABOTData.defaultSettingPerformance);
                     ABOTData.totalTimeSpendTesting += ABOTData.defaultSettingPerformance.testTime;
-                    dataTracker.StoreResultsToFile("Default settings:", ABOTData.defaultSettingPerformance, false, ABOTData.currentSettings);
 
                     //Check for perfromance
                     if (PerformanceTest(ref ABOTData.defaultSettingPerformance))
                     {
                         //Bad perfromance detected
-                        if (ChangeSetting(ref ABOTData.currentSettings) == 1)
+                        if (usePresets)
                         {
-                            ABOTData.adjustSettings = true;//Remove?
-                            ABOTData.testingStage = 1;
-                            SceneManager.LoadScene(testSceneName);
+                            if (graphics.CheckPresetIndex(ABOTData.presetsIndex))
+                            {
+                                Debug.Log("Test preset: " + ABOTData.presets[ABOTData.presetsIndex].presetName);
+                                dataTracker.StoreResultsToFile("Starting preset :" + ABOTData.presets[ABOTData.presetsIndex].presetName, ABOTData.defaultSettingPerformance, false, ABOTData.currentSettings);
+                            }
+
+                            //Change to lower preset
+                            if (graphics.ChangePreset(ABOTData.presetsIndex - 1))
+                            {
+                                ABOTData.testingStage = 1;
+                                SceneManager.LoadScene(testSceneName);
+                            }
+                            else//Changing preset failed
+                                ABOTData.testingStage = -1;
                         }
-                        else//Unknown id or no valid settings available
-                            ABOTData.testingStage = -1;
+                        else
+                        {
+                            dataTracker.StoreResultsToFile("Default settings:", ABOTData.defaultSettingPerformance, false, ABOTData.currentSettings);
+
+                            ABOTData.testNumber = 0;
+                            Debug.Log("Test: " + ABOTData.testNumber + ":" + "Testing default settings");
+                            if (ChangeSetting(ref ABOTData.currentSettings) == 1)
+                            {
+                                ABOTData.adjustSettings = true;//Remove?
+                                ABOTData.testingStage = 1;
+                                SceneManager.LoadScene(testSceneName);
+                            }
+                            else//Unknown id or no valid settings available
+                                ABOTData.testingStage = -1;
+                        } 
                     }
                     else
                     {
@@ -202,10 +229,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
                 else if (ABOTData.testingStage == 1)//Test invidual settings
                 {
-                    ABOTData.testNumber++;
-                    Debug.Log("Test "+ ABOTData.testNumber +":" + "Adjusted settings test");
-
-                    //Store data to static class and file
+                    //Store test results to static class and file
                     dataTracker.StoreData(ref ABOTData.currentSettingPerformance);
                     ABOTData.totalTimeSpendTesting += ABOTData.currentSettingPerformance.testTime;
                     dataTracker.StoreResultsToFile("Adjusted settings attempt " + ABOTData.testNumber + ":", ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
@@ -213,16 +237,50 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                     if(PerformanceTest(ref ABOTData.currentSettingPerformance))
                     {
                         //Bad perfromance still detected
-                        //Bad perfromance detected
-                        if (ChangeSetting(ref ABOTData.currentSettings) == 1)
+                        if (usePresets)
                         {
-                            ABOTData.adjustSettings = true;
-                            ABOTData.testingStage = 1;
-                            SceneManager.LoadScene(testSceneName);
-                        }
-                        else//Unknown id or no valid settings available
-                            ABOTData.testingStage = -1;
+                            if (graphics.CheckPresetIndex(ABOTData.presetsIndex))
+                            {
+                                Debug.Log("Test preset: " + ABOTData.presets[ABOTData.presetsIndex].presetName);
+                                dataTracker.StoreResultsToFile("Testing preset :" + ABOTData.presets[ABOTData.presetsIndex].presetName, ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
+                            }
 
+                            //Change to lower preset
+                            if (graphics.ChangePreset(ABOTData.presetsIndex - 1))
+                            {
+                                ABOTData.testingStage = 1;
+                                SceneManager.LoadScene(testSceneName);
+                            }
+                            else//Changing preset failed
+                            {
+                                Debug.Log("No Working presets found");
+                                ABOTData.testingStage = -1;
+                            }
+                        }
+                        else
+                        {
+                            dataTracker.StoreResultsToFile("Adjusted settings attempt " + ABOTData.testNumber + ":", ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
+
+                            ABOTData.testNumber++;
+                            Debug.Log("Test: " + ABOTData.testNumber + ":" + "Adjusted settings test");
+
+                            if (ChangeSetting(ref ABOTData.currentSettings) == 1)
+                            {
+                                ABOTData.adjustSettings = true;
+                                ABOTData.testingStage = 1;
+                                SceneManager.LoadScene(testSceneName);
+                            }
+                            else//Unknown id or no valid settings available
+                            {
+                                Debug.Log("No Working setting found");
+                                ABOTData.testingStage = -1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //No bad performance detected
+                        ABOTData.testingStage = -1;
                     }
                 }
 
@@ -242,9 +300,9 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         bool t_badPerformance = CheckForBadPerformance(p_data);
 
         if(t_badPerformance)
-            Debug.Log("Perfromance proplems found");
+            Debug.Log("Performance proplems found");
         else
-            Debug.Log("No perfromance problems");
+            Debug.Log("No performance problems");
 
         return t_badPerformance;
     }
@@ -367,26 +425,23 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         ABOTData.testStarted = true;
 
         //Initialize values
-        graphics.ApplySettingValues(ABOTData.currentSettings);
+        if (usePresets)
+        {
+            graphics.ChangePreset(ABOTData.presetsIndex);
+        }
+        else
+        {
+            graphics.ApplySettingValues(ABOTData.currentSettings);
+            ABOTData.nextSettingIndex = 0;
+        }
         ABOTData.testingStage = 0;
-        ABOTData.nextSettingIndex = 0;
         ABOTData.targetFPS = targetFPS;
-
 
         ABOTData.sceneMode = 1;
         ABOTData.loadSMHSettings = true;//Ensure that SceneModeHandler uses data from ABOTData class
 
+        Debug.Log("Performance optimization started");
         SceneManager.LoadScene(testSceneName);
-    }
-
-    void StartInvidualSettingTest()
-    {
-        //Initialize values
-        if (ABOTData.nextSettingIndex < ABOTData.settingList.Count)
-        {
-            SceneManager.LoadScene(testSceneName);
-        }
-        
     }
 
     //Change setting, returns 1 == success, 0 == failed to find a valid setting and -1 == unknown id

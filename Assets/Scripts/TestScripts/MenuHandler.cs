@@ -16,6 +16,7 @@ public class MenuHandler : MonoBehaviour
     [Header("ABOT Menu")]
     public PerformanceOptimizationHandler abot;
     public TMPro.TMP_InputField fpsInput;
+    public TMPro.TMP_Dropdown optMethod;
 
     [Header("Graphics Menu")]
     [Tooltip("Leave this empty if graphics settings arent used")]
@@ -57,6 +58,20 @@ public class MenuHandler : MonoBehaviour
         //ABOT settings
         if (fpsInput != null)
             fpsInput.text = ABOTData.targetFPS.ToString();
+
+        if(optMethod != null)
+        {
+            List<string> t_optMethodOptions = new List<string>();
+            t_optMethodOptions.Add("Presets");
+            t_optMethodOptions.Add("Settings");
+            optMethod.options.Clear();
+            optMethod.AddOptions(t_optMethodOptions);
+
+            if (abot.usePresets)
+                optMethod.value = 0;
+            else
+                optMethod.value = 1;
+        }    
 
         //Graphics settings
         if (graphics != null)
@@ -105,6 +120,7 @@ public class MenuHandler : MonoBehaviour
             for (int i = 0; i < graphics.presets.Count; i++)
                 t_presetNames.Add(graphics.presets[i].presetName);
             presets.AddOptions(t_presetNames);
+            presets.value = graphics.presetIndex;
             presets.RefreshShownValue();
         }
     }
@@ -176,6 +192,23 @@ public class MenuHandler : MonoBehaviour
             Debug.Log("Fps input field not assigned");
     }
 
+    public void ButtonGetOptimizationMethod()
+    {
+        if (optMethod != null)
+        {
+            if (optMethod.value == 0)
+            {
+                abot.usePresets = true;
+                ABOTData.usePresets = true;
+            }
+            else
+            {
+                abot.usePresets = false;
+                ABOTData.usePresets = false;
+            }
+        }
+    }
+
     //Graphics Settings
     void SetGraphicSettingsValues(SettingValues p_settings)
     {
@@ -240,7 +273,7 @@ public class MenuHandler : MonoBehaviour
 
     public void ButtonSetPreset()
     {
-        graphics.ApplySettingValues(graphics.presets[presets.value]);
         SetGraphicSettingsValues(graphics.settingValues);
+        graphics.ChangePreset(presets.value);
     }
 }

@@ -6,7 +6,6 @@ using UnityEngine.Rendering.Universal;
 [System.Serializable]
 public class SValue
 {
-    //Note: might be more practical to replace with a template class
     public SValue (int p_value, string p_id, bool p_use = true,  int p_pImpact = 0, int p_gImpact = 0)
     {
         id = p_id;
@@ -141,6 +140,12 @@ public class SettingValues
     public SValue aaQuality; //values 0-2
     public SValue shadowQuality; //values 0-2
     public SValue shadowDistance;
+
+    //ABOT data
+    [Tooltip("The perfromance impact of the preset, settings with higher values are MORE likely to be selected")]
+    public int pImpact = 0;
+    [Tooltip("The graphical impact of the preset, settings with higher values are LESS likely to be selected")]
+    public int gImpact = 0;
 }
 
 public class GraphicsSettings : MonoBehaviour
@@ -152,6 +157,9 @@ public class GraphicsSettings : MonoBehaviour
     public SettingValues settingValues = new SettingValues();
     public Resolution[] resolutions;
     public List<SettingValues> presets = new List<SettingValues>();
+    public int presetIndex = 2;
+    [Tooltip("Setting this true allows the preset to be set in ispector")]
+    public bool useCustomPresets = false;
 
     [Tooltip("Apply settings when the class is initialized, if false the current settings will still be stored into settingValues, but not have their effect applied")]
     public bool applySettings = true;
@@ -166,17 +174,24 @@ public class GraphicsSettings : MonoBehaviour
         resolutions = Screen.resolutions;
 
         //Presets
-        presets.Add(new SettingValues("Very Low", false, 0, 0, 0, 0, 0, 0, 0));
-        presets.Add(new SettingValues("Low", false, 1, 1, 1, 1, 0, 1, 50));
-        presets.Add(new SettingValues("Medium", false, 2, 2, 2, 1, 0, 1, 100));
-        presets.Add(new SettingValues("High", false, 3, 3, 3, 2, 1, 2, 250));
-        presets.Add(new SettingValues("Very High", false, 4, 4, 3, 2, 2, 2, 500));
+        if (!useCustomPresets)
+        {
+            presets.Add(new SettingValues("Very Low", false, 0, 0, 0, 0, 0, 0, 0));
+            presets.Add(new SettingValues("Low", false, 1, 1, 1, 1, 0, 1, 50));
+            presets.Add(new SettingValues("Medium", false, 2, 2, 2, 1, 0, 1, 100));
+            presets.Add(new SettingValues("High", false, 3, 3, 3, 2, 1, 2, 250));
+            presets.Add(new SettingValues("Very High", false, 4, 4, 3, 2, 2, 2, 500));
+        }
 
         if (!ABOTData.loadGSettings)
         {
-            settingValues = presets[3];
             ABOTData.currentSettings = settingValues;
             ABOTData.applySettings = applySettings;
+            
+            ABOTData.presets = presets;
+            ABOTData.presetsIndex = presetIndex;
+            ABOTData.useCustomPresets = useCustomPresets;
+            ChangePreset(presetIndex, false);
 
             ABOTData.loadGSettings = true;
         }
@@ -184,6 +199,10 @@ public class GraphicsSettings : MonoBehaviour
         {
             settingValues = ABOTData.currentSettings;
             applySettings = ABOTData.applySettings;
+
+            presets = ABOTData.presets;
+            presetIndex = ABOTData.presetsIndex;
+            useCustomPresets = ABOTData.useCustomPresets;
         }
 
         if (applySettings)
@@ -202,14 +221,15 @@ public class GraphicsSettings : MonoBehaviour
         
     }
 
-    public void ChangeSettingValues(SettingValues p_values)
+    //Change the setting values and store current settings into the static class
+    void ChangeSettingValues(SettingValues p_values)
     {
         settingValues = p_values;
         ABOTData.currentSettings = p_values;
     }
 
     //Change the program setting values to the ones stored in the settingValues variable;
-    void ApplySettingValues()
+    void ApplySettings()
     {
         SetShadowQuality(settingValues.shadowQuality.ivalue);//Set shadow quality first as it changes the main asset
 
@@ -222,11 +242,38 @@ public class GraphicsSettings : MonoBehaviour
         SetShadowDistance(settingValues.shadowDistance.ivalue);
     }
 
-    //Add new values ti the settingValues variable and use them to change the program setting values 
+    //Add new values to the settingValues variable and use them to change the program setting values 
     public void ApplySettingValues(SettingValues p_values)
     {
         ChangeSettingValues(p_values);
-        ApplySettingValues();
+        ApplySettings();
+    }
+
+    //Returns true if the index is valid and false if not
+    public bool CheckPresetIndex(int p_index)
+    {
+        if (presets.Count > 0 && p_index < presets.Count && p_index >= 0)
+            return true;
+        else
+            return false;
+    }
+
+    //Change the current setting preset, returns true on success, note that for the settings to tale effect the p_applySettings need to be true 
+    public bool ChangePreset(int p_index, bool p_applySettings = true)
+    {
+        if (CheckPresetIndex(p_index))
+        {
+            presetIndex = p_index;
+            ABOTData.presetsIndex = p_index;
+            settingValues = presets[p_index];
+
+            if (p_applySettings)
+                ApplySettingValues(presets[p_index]);
+
+            return true;
+        }
+        else
+            return false;
     }
 
     //Sets the id values for setting list
