@@ -343,6 +343,7 @@ MonoBehaviour:
   mainMenu: {fileID: 0}
   abot: {fileID: 0}
   fpsInput: {fileID: 0}
+  optMethod: {fileID: 0}
   graphics: {fileID: 0}
   fullscreen: {fileID: 0}
   vSynch: {fileID: 0}
@@ -511,7 +512,11 @@ MonoBehaviour:
       gImpact: 0
       adjustImpact: 0
       timesSelected: 0
+    pImpact: 0
+    gImpact: 0
   presets: []
+  presetIndex: 2
+  useCustomPresets: 0
   applySettings: 1
 --- !u!1 &2075842357861792299
 GameObject:
@@ -1259,6 +1264,7 @@ MonoBehaviour:
   movementHandler: {fileID: 5923236293390717495}
   graphics: {fileID: 9194557103464686394}
   targetFPS: 60
+  usePresets: 1
   autoFillSettingList: 1
   settingList: []
   favorGraphics: 0
@@ -1291,6 +1297,7 @@ MonoBehaviour:
     averageUnderTargetFPS: 0
     averageAboveTargetFPS: 0
   delayDataTracking: 0
+  framerate: 0
   averageFPSTimeFrame: 1
   testPerfromance: 1
   targetFPS: 60
@@ -2329,7 +2336,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -107}
+  m_AnchoredPosition: {x: 0, y: 184.99998}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3735884985435402718

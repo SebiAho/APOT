@@ -227,17 +227,17 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
                 }
 
-                else if (ABOTData.testingStage == 1)//Test invidual settings
+                else if (ABOTData.testingStage == 1)
                 {
                     //Store test results to static class and file
                     dataTracker.StoreData(ref ABOTData.currentSettingPerformance);
                     ABOTData.totalTimeSpendTesting += ABOTData.currentSettingPerformance.testTime;
-                    dataTracker.StoreResultsToFile("Adjusted settings attempt " + ABOTData.testNumber + ":", ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
+                    //dataTracker.StoreResultsToFile("Adjusted settings attempt " + ABOTData.testNumber + ":", ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
 
                     if(PerformanceTest(ref ABOTData.currentSettingPerformance))
                     {
                         //Bad perfromance still detected
-                        if (usePresets)
+                        if (usePresets)//Optimize using presets
                         {
                             if (graphics.CheckPresetIndex(ABOTData.presetsIndex))
                             {
@@ -257,7 +257,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                                 ABOTData.testingStage = -1;
                             }
                         }
-                        else
+                        else//Optimize using invidual settings
                         {
                             dataTracker.StoreResultsToFile("Adjusted settings attempt " + ABOTData.testNumber + ":", ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
 
