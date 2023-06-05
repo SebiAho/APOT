@@ -11,9 +11,11 @@ public class SceneModeHandler : MonoBehaviour
 
     [Tooltip("The parent Gameobjects that contains the mode specific objects")]
     public List<GameObject> modeObjects = new List<GameObject>();
-
+    
     public UserHandler userHandler;
     public AutomaticMovementHandler automaticMovement;
+    public GameObject denseTreesParent;
+    public GameObject extraDenseTreesParent;
 
     private void Awake()
     {
@@ -57,5 +59,23 @@ public class SceneModeHandler : MonoBehaviour
             modeObjects[sceneMode].SetActive(true);
         }
 
+        if (denseTreesParent != null && extraDenseTreesParent != null)
+        {
+            if (ABOTData.treeDensity == 1)
+            {
+                denseTreesParent.SetActive(true);
+                extraDenseTreesParent.SetActive(false);
+            }
+            else if (ABOTData.treeDensity == 2)
+            {
+                denseTreesParent.SetActive(true);
+                extraDenseTreesParent.SetActive(true);
+            }
+            else
+            {
+                denseTreesParent.SetActive(false);
+                extraDenseTreesParent.SetActive(false);
+            }
+        }
     }
 }

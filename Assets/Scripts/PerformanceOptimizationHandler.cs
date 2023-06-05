@@ -39,9 +39,11 @@ public static class ABOTData
     public static List<SettingValues> presets = new List<SettingValues>();
     public static int presetsIndex = 0;
     public static bool useCustomPresets = false;//If false the system will use a list of preset presets
+
     //Various
     public static int targetFPS = 60; //The fps value test/optimization is tageted against, set by PerformanceOptimizationHandler and used if the testStarted == true
     public static float delayTime;//The time used to delay performance test, set by PerformanceOptimizationHandler and used if the testStarted == true
+    public static int treeDensity = 0; //The density of the trees. set selected by the user in the main menu, options are 0 = normal, 1 = dense and 2 = extra dense
 
     //Do not init at Awake/Start!!!
     public static bool testStarted = false;//Tells systems if a perfromance test has been started, set by PerformanceOptimizationHandler
@@ -61,7 +63,8 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
     [Tooltip("Use preset when doing perfromance optimization")]
     public bool usePresets = true;
-    [Tooltip("If true the handler will automatically add the ingame settings to SettingList and the system will use their change value to adjust them, if false the developer needs to add the settings separately")]
+    [HideInInspector]
+    [Tooltip("DEPRECTATED(User made list system is not finished due to a lack of time), If true the handler will automatically add the ingame settings to SettingList and the system will use their change value to adjust them, if false the developer needs to add the settings separately")]
     public bool autoFillSettingList = true;
     [Tooltip("List of graphics settings. it is possible to give a single setting multiple values which will be evaluated separately based on their priority. Note changes to the list after starting the program have no effect ")]
     public List<SValue> settingList = new List<SValue>();
@@ -359,11 +362,6 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         });
     }
 
-    void SelectSettings()
-    {
-
-    }
-
     void AutoFillSettingList()
     {
         //Auto add settings
@@ -416,7 +414,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         //shadow distance
         graphics.settingValues.shadowDistance.pImpact = 5;
         graphics.settingValues.shadowDistance.gImpact = 3;
-        graphics.settingValues.shadowDistance.changeAmount = 10;
+        graphics.settingValues.shadowDistance.changeAmount = 50;
         graphics.settingValues.shadowDistance.adjustImpact = 1;
     }
 

@@ -1,0 +1,69 @@
+Starting preset :Medium
+Time: 6/5/2023 2:55:55 PM
+
+Time tested: 22.62595
+Lowest frame rate: 108.7701
+Highest frame rate 328.8068
+Target frame rate: 240
+Time under target frame rate:22.62595
+Average under target frame rate:169.4532
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 2
+Resolution: 2
+Texture quality: 2
+Antialiazing method: 1
+Antialiazing quality: 0
+Shadow quality: 1
+Shadow distance 100
+
+
+Testing preset :Low
+Time: 6/5/2023 2:56:21 PM
+
+Time tested: 22.50301
+Lowest frame rate: 91.29669
+Highest frame rate 328.4935
+Target frame rate: 240
+Time under target frame rate:22.50301
+Average under target frame rate:169.4319
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 1
+Resolution: 1
+Texture quality: 1
+Antialiazing method: 1
+Antialiazing quality: 0
+Shadow quality: 1
+Shadow distance 0
+
+
+Testing preset :Very Low
+Time: 6/5/2023 2:56:47 PM
+
+Time tested: 22.52546
+Lowest frame rate: 85.42773
+Highest frame rate 328.5043
+Target frame rate: 240
+Time under target frame rate:22.52546
+Average under target frame rate:169.367
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 0
+Resolution: 0
+Texture quality: 0
+Antialiazing method: 0
+Antialiazing quality: 0
+Shadow quality: 0
+Shadow distance 0
+
+

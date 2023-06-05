@@ -240,6 +240,7 @@ public class PerformanceDataTracker : MonoBehaviour
     //Store results
     public void StoreResultsToFile(string p_testName, PerformanceDataContainer p_data, bool p_append)
     {
+
         StreamWriter t_file = new StreamWriter(fileLocation + fileName, p_append);
 
         string t_text = p_testName + '\n' +

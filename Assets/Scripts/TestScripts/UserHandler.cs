@@ -115,6 +115,25 @@ public class UserHandler : MonoBehaviour
         //UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
         //Debug.Log("Mode " + ABOTData.sceneMode);
     }
+    private void FixedUpdate()
+    {
+        //Movement
+        if (autoMoveHandler == null | !moveAutomatically)
+            MovementLogic(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
+        else
+        {
+            autoMoveHandler.HandlerUpdate();
+            if (usePhysics)
+            {
+                if (autoMoveHandler.autoMoveEnabled && autoMoveHandler.moveDelay <= 0)
+                {
+                    userMoveDirection = autoMoveHandler.getMoveDirection() - transform.position;
+                    ApplyGrafity();
+                    userMoveDirection.y = fallVelocity;
+                }
+            }
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -127,7 +146,7 @@ public class UserHandler : MonoBehaviour
 
             //Movement
             if (autoMoveHandler == null | !moveAutomatically)
-                UserMovement(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
+                UserMovement();
             else
             {
                 autoMoveHandler.HandlerUpdate();
@@ -135,9 +154,6 @@ public class UserHandler : MonoBehaviour
                 {
                     if (autoMoveHandler.autoMoveEnabled && autoMoveHandler.moveDelay <= 0)
                     {
-                        userMoveDirection = autoMoveHandler.getMoveDirection() - transform.position;
-                        ApplyGrafity();
-                        userMoveDirection.y = fallVelocity;
                         characterController.Move(userMoveDirection * autoMoveHandler.movementSpeed * Time.deltaTime);
                     }
                 }
@@ -163,7 +179,8 @@ public class UserHandler : MonoBehaviour
     }
 
     //Movement
-    void UserMovement(float p_vertMovInput, float p_horizMovInput, bool p_jumpOrTGrafInput, bool p_iSpeedInput)
+
+    void MovementLogic(float p_vertMovInput, float p_horizMovInput, bool p_jumpOrTGrafInput, bool p_iSpeedInput)
     {
         //Set movement towards camera direction
         userMoveDirection = cameraTransform.right * p_horizMovInput + cameraTransform.forward * p_vertMovInput;
@@ -204,7 +221,10 @@ public class UserHandler : MonoBehaviour
             else
                 moveSpeedModifierIndex = 0;
         }
+    }
 
+    void UserMovement()
+    {
         currentMoveSpeedModifier = moveSpeedModifiers[moveSpeedModifierIndex];
 
         //Move user

@@ -13,6 +13,9 @@ public class MenuHandler : MonoBehaviour
 
     public GameObject mainMenu;
 
+    [Header("Main Menu")]
+    public TMPro.TMP_Dropdown treeDensity;
+
     [Header("ABOT Menu")]
     public PerformanceOptimizationHandler abot;
     public TMPro.TMP_InputField fpsInput;
@@ -152,6 +155,11 @@ public class MenuHandler : MonoBehaviour
         SceneManager.LoadScene(p_index);
     }
 
+    public void ButtonExitProgram()
+    {
+        Application.Quit();
+    }
+
     public void ButtonLoadScene(string p_sceneName)
     {
         SceneManager.LoadScene(p_sceneName);
@@ -161,6 +169,11 @@ public class MenuHandler : MonoBehaviour
     {
         ABOTData.sceneMode = p_mode;
         ABOTData.loadSMHSettings = true;
+    }
+
+    public void ButtonSetTreeDensity()
+    {
+        ABOTData.treeDensity = treeDensity.value;
     }
 
     //Set object inactive if it is active and active if it isin't
