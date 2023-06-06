@@ -18,6 +18,7 @@ public static class ABOTData
     public static bool autoFillSettingList = false;
     public static List<SValue> settingList = new List<SValue>();
     public static int nextSettingIndex = 0;//Index of the setting that is next in line to be checked, not used if autoFillSettingList == true
+    public static float maxAllowedTestTime = 0f; //The max amount of time the test can go wehen under target frame rate
 
     public static int testingStage = 0; //Current testing state, 0 = current settings, 1 = Invidual setting testing, -1 = end the test
     public static float maxAllowedTimeBelowTargetFPS = 0;
@@ -43,7 +44,7 @@ public static class ABOTData
     //Various
     public static int targetFPS = 60; //The fps value test/optimization is tageted against, set by PerformanceOptimizationHandler and used if the testStarted == true
     public static float delayTime;//The time used to delay performance test, set by PerformanceOptimizationHandler and used if the testStarted == true
-    public static int treeDensity = 0; //The density of the trees. set selected by the user in the main menu, options are 0 = normal, 1 = dense and 2 = extra dense
+    public static int treeDensity = 0; //The density of the trees. selected by the user in the main menu, options are 0 = normal, 1 = dense and 2 = extra dense
 
     //Do not init at Awake/Start!!!
     public static bool testStarted = false;//Tells systems if a perfromance test has been started, set by PerformanceOptimizationHandler
@@ -71,13 +72,15 @@ public class PerformanceOptimizationHandler : MonoBehaviour
     [Tooltip("If the the combined priorities are the same, sort based on the favored impact type")]
     public bool favorGraphics = false;
 
-    [Header("Perfromance Test")]
+    [Header("Performance Test")]
     [Tooltip("Scene used in testing")]
     public string testSceneName = "TerrainDemoSceneABOTDev";
     [Tooltip("Scene where main menu is located")]
     public string menuSceneName = "MainMenu";
     [Tooltip("Delay the start of the test to avoid the initial loading of the scene from affecting it")]
     public float delayTest = 2;
+    [Tooltip("Max amount of time (in seconds) the test can go wehen under target frame rate (at especially low frame rates the movement can get stuck so this works as an alternative), the test will only ber interrupted if the time it stays below the target exeeds this and will be considered failed in such instances")]
+    public float maxAllowedTestTime = 30f; //The max amount of time the test can go wehen under target frame rate
 
     [Header("Test logic")]
     [Tooltip("The max time(in percentages) that the frame rate can stay below target fps for it to be conisdered acceptaple")]
@@ -114,6 +117,8 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
             ABOTData.usePresets = usePresets;
             ABOTData.autoFillSettingList = autoFillSettingList;
+
+            ABOTData.maxAllowedTestTime = maxAllowedTestTime;
         }
         else
         {
@@ -127,6 +132,8 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
             usePresets = ABOTData.usePresets;
             autoFillSettingList = ABOTData.autoFillSettingList;
+
+            maxAllowedTestTime = ABOTData.maxAllowedTestTime;
         }
 
         if (dataTracker == null)
@@ -177,7 +184,8 @@ public class PerformanceOptimizationHandler : MonoBehaviour
         //Optimize perfromance
         if (ABOTData.testStarted && runTest)
         {
-            if (movementHandler.getMovementFinished())
+            TestExeedsMaxTime();
+            if (movementHandler.getMovementFinished() || TestExeedsMaxTime())
             {
                 if (ABOTData.testingStage == 0)//Test default settings
                 {                    
@@ -322,6 +330,17 @@ public class PerformanceOptimizationHandler : MonoBehaviour
 
             if (t_percent > maxAllowedTimeBelowTargetFPS)
                 return true;
+        }
+
+        return false;
+    }
+
+    public bool TestExeedsMaxTime()
+    {
+        if (maxAllowedTestTime < dataTracker.data.timeUnderTargetFPS)
+        {
+            Debug.Log("Time Exeeded");
+            return true;
         }
 
         return false;

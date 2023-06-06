@@ -180,7 +180,7 @@ public class GraphicsSettings : MonoBehaviour
             presets.Add(new SettingValues("Low", false, 1, 1, 1, 1, 0, 1, 50));
             presets.Add(new SettingValues("Medium", false, 2, 2, 2, 1, 0, 1, 100));
             presets.Add(new SettingValues("High", false, 3, 3, 3, 2, 1, 2, 250));
-            presets.Add(new SettingValues("Very High", false, 4, 4, 3, 2, 2, 2, 500));
+            presets.Add(new SettingValues("Very High", false, 4, 4, 3, 2, 2, 3, 500));
         }
 
         if (!ABOTData.loadGSettings)

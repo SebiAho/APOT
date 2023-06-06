@@ -58,6 +58,10 @@ public class MenuHandler : MonoBehaviour
                 menuList[i].SetActive(false);
         }
 
+        //Set the tree density
+        if(treeDensity != null)
+            treeDensity.value = ABOTData.treeDensity;
+
         //ABOT settings
         if (fpsInput != null)
             fpsInput.text = ABOTData.targetFPS.ToString();
@@ -286,7 +290,7 @@ public class MenuHandler : MonoBehaviour
 
     public void ButtonSetPreset()
     {
-        SetGraphicSettingsValues(graphics.settingValues);
         graphics.ChangePreset(presets.value);
+        SetGraphicSettingsValues(graphics.settingValues);
     }
 }

@@ -1272,6 +1272,7 @@ MonoBehaviour:
   testSceneName: TerrainDemoSceneABOTDev
   menuSceneName: MainMenu
   delayTest: 2
+  maxAllowedTestTime: 5
   maxAllowedTimeBelowTargetFPS: 20
 --- !u!114 &5923236292868263081
 MonoBehaviour:
@@ -1721,9 +1722,9 @@ MonoBehaviour:
   pauseInput: Fire2
   increaseSpeedInput: Fire3
   useCamera: 1
-  cameraSpeed: 6
+  cameraSpeed: 10
   cameraMaxVerticalRotation: 90
-  movementSpeed: 25
+  movementSpeed: 15
   grafityEnabled: 1
   grafityValue: 9.81
   useJumpInput: 1
@@ -1731,7 +1732,7 @@ MonoBehaviour:
   moveSpeedModifiers:
   - 1
   - 0.5
-  - 2
+  - 3
   autoMoveHandler: {fileID: 0}
   moveAutomatically: 1
   useHandlerMoveSpeed: 0

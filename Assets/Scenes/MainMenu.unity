@@ -6293,7 +6293,7 @@ MonoBehaviour:
   dataTracker: {fileID: 840686540}
   movementHandler: {fileID: 0}
   graphics: {fileID: 479545408}
-  targetFPS: 240
+  targetFPS: 60
   usePresets: 1
   autoFillSettingList: 1
   settingList: []
@@ -6301,6 +6301,7 @@ MonoBehaviour:
   testSceneName: TerrainDemoSceneABOTDev
   menuSceneName: MainMenu
   delayTest: 3
+  maxAllowedTestTime: 10
   maxAllowedTimeBelowTargetFPS: 20
 --- !u!114 &840686540
 MonoBehaviour:

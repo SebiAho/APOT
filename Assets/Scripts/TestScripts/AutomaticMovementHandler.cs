@@ -58,6 +58,12 @@ public class AutomaticMovementHandler : MonoBehaviour
             HandlerInitStart();
     }
 
+    private void FixedUpdate()
+    {
+        if(mainHandler)
+            HandlerFixedUpdate();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -93,8 +99,7 @@ public class AutomaticMovementHandler : MonoBehaviour
             applyRotation = false;
     }
 
-    //If this script is not the main handler this needs to be called in the actual main handler script of the object
-    public void HandlerUpdate()
+    public void HandlerFixedUpdate()
     {
         //Movement
         if (autoMoveEnabled && moveDelay <= 0)
@@ -127,7 +132,7 @@ public class AutomaticMovementHandler : MonoBehaviour
                     if (completedCircuits < circuitAmount)
                         completedCircuits++;
 
-                    if(completedCircuits >= circuitAmount | !MovePointValid(currentMovePoint.nextMovePoint))
+                    if (completedCircuits >= circuitAmount | !MovePointValid(currentMovePoint.nextMovePoint))
                     {
                         movementFinished = true;
                         autoMoveEnabled = false;
@@ -145,7 +150,7 @@ public class AutomaticMovementHandler : MonoBehaviour
                 }
             }
         }
-        else if(moveDelay > 0)
+        else if (moveDelay > 0)
             moveDelay -= Time.deltaTime;
 
 
@@ -161,6 +166,11 @@ public class AutomaticMovementHandler : MonoBehaviour
             //Rotate over time
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
         }
+    }
+
+    //If this script is not the main handler this needs to be called in the actual main handler script of the object
+    public void HandlerUpdate()
+    {
     }
 
     bool MovePointValid(AutomaticMovementPoint p_movePoint)

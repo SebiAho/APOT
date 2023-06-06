@@ -122,7 +122,7 @@ public class UserHandler : MonoBehaviour
             MovementLogic(Input.GetAxis(verticalMovementInput), Input.GetAxis(horizontalMovementInput), Input.GetButtonDown(jumpOrToggleGrafityInput), Input.GetButtonDown(increaseSpeedInput));
         else
         {
-            autoMoveHandler.HandlerUpdate();
+            autoMoveHandler.HandlerFixedUpdate();
             if (usePhysics)
             {
                 if (autoMoveHandler.autoMoveEnabled && autoMoveHandler.moveDelay <= 0)
@@ -149,7 +149,7 @@ public class UserHandler : MonoBehaviour
                 UserMovement();
             else
             {
-                autoMoveHandler.HandlerUpdate();
+                //autoMoveHandler.HandlerUpdate();
                 if (usePhysics)
                 {
                     if (autoMoveHandler.autoMoveEnabled && autoMoveHandler.moveDelay <= 0)
