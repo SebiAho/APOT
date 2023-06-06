@@ -25,8 +25,6 @@ public static class ABOTData
 
     //Performance Data Tracker
     public static bool loadPDTSettings = false;
-    public static PerformanceDataContainer defaultSettingPerformance = new PerformanceDataContainer();
-    public static PerformanceDataContainer currentSettingPerformance = new PerformanceDataContainer();
     public static string fileLocation = "Assets/";
 
     //Performance Data Display
@@ -189,12 +187,11 @@ public class PerformanceOptimizationHandler : MonoBehaviour
             {
                 if (ABOTData.testingStage == 0)//Test default settings
                 {                    
-                    //Store test results to static class and file
-                    dataTracker.StoreData(ref ABOTData.defaultSettingPerformance);
-                    ABOTData.totalTimeSpendTesting += ABOTData.defaultSettingPerformance.testTime;
+                    //Store test results to a file
+                    ABOTData.totalTimeSpendTesting += dataTracker.data.testTime;
 
                     //Check for perfromance
-                    if (PerformanceTest(ref ABOTData.defaultSettingPerformance))
+                    if (PerformanceTest(ref dataTracker.data))
                     {
                         //Bad perfromance detected
                         if (usePresets)
@@ -202,7 +199,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                             if (graphics.CheckPresetIndex(ABOTData.presetsIndex))
                             {
                                 Debug.Log("Test preset: " + ABOTData.presets[ABOTData.presetsIndex].presetName);
-                                dataTracker.StoreResultsToFile("Starting preset :" + ABOTData.presets[ABOTData.presetsIndex].presetName, ABOTData.defaultSettingPerformance, false, ABOTData.currentSettings);
+                                dataTracker.StoreResultsToFile("Starting preset :" + ABOTData.presets[ABOTData.presetsIndex].presetName, dataTracker.data, false, ABOTData.currentSettings);
                             }
 
                             //Change to lower preset
@@ -216,7 +213,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                         }
                         else
                         {
-                            dataTracker.StoreResultsToFile("Default settings:", ABOTData.defaultSettingPerformance, false, ABOTData.currentSettings);
+                            dataTracker.StoreResultsToFile("Default settings:", dataTracker.data, false, ABOTData.currentSettings);
 
                             ABOTData.testNumber = 0;
                             Debug.Log("Test: " + ABOTData.testNumber + ":" + "Testing default settings");
@@ -241,11 +238,10 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                 else if (ABOTData.testingStage == 1)
                 {
                     //Store test results to static class and file
-                    dataTracker.StoreData(ref ABOTData.currentSettingPerformance);
-                    ABOTData.totalTimeSpendTesting += ABOTData.currentSettingPerformance.testTime;
+                    ABOTData.totalTimeSpendTesting += dataTracker.data.testTime;
                     //dataTracker.StoreResultsToFile("Adjusted settings attempt " + ABOTData.testNumber + ":", ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
 
-                    if(PerformanceTest(ref ABOTData.currentSettingPerformance))
+                    if(PerformanceTest(ref dataTracker.data))
                     {
                         //Bad perfromance still detected
                         if (usePresets)//Optimize using presets
@@ -253,7 +249,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                             if (graphics.CheckPresetIndex(ABOTData.presetsIndex))
                             {
                                 Debug.Log("Test preset: " + ABOTData.presets[ABOTData.presetsIndex].presetName);
-                                dataTracker.StoreResultsToFile("Testing preset :" + ABOTData.presets[ABOTData.presetsIndex].presetName, ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
+                                dataTracker.StoreResultsToFile("Testing preset :" + ABOTData.presets[ABOTData.presetsIndex].presetName, dataTracker.data, true, ABOTData.currentSettings);
                             }
 
                             //Change to lower preset
@@ -270,7 +266,7 @@ public class PerformanceOptimizationHandler : MonoBehaviour
                         }
                         else//Optimize using invidual settings
                         {
-                            dataTracker.StoreResultsToFile("Adjusted settings attempt " + ABOTData.testNumber + ":", ABOTData.currentSettingPerformance, true, ABOTData.currentSettings);
+                            dataTracker.StoreResultsToFile("Adjusted settings attempt " + ABOTData.testNumber + ":", dataTracker.data, true, ABOTData.currentSettings);
 
                             ABOTData.testNumber++;
                             Debug.Log("Test: " + ABOTData.testNumber + ":" + "Adjusted settings test");
