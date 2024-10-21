@@ -2,6 +2,7 @@ This Unity project was made to test the possibility of automating the setting ad
 This was done to gather test data for my thesis "Automatic optimization of program settings for performance".
 Link: https://urn.fi/URN:NBN:fi:amk-2023121537782
 The project is explained more in dept at chapter 4 of said thesis.
+The Assets/Scripts location contains custom code written specifically for this project.
 
 It needs to be noted that due to time constraints, the code was written mostly with the goal of "just get it to work".
 Comnbined with a lack of plans or need for further further development, means that the code can be a bit messy in parts.
