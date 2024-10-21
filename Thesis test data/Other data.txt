@@ -1,0 +1,16 @@
+System information:
+Operating system: Windows 11 Pro
+Operating system version: 21H2
+
+Processor: Intel(R) Core(TM) i9-9900 CPU @ 3.10GHz 3.10 GHz
+RAM: 64 GB
+GPU: Intel(R) Graphics 630
+
+Graphics setting values:
+V-synch 0 - 4
+Resolution: 640 x 480, 720 x 480, 720 x 576, 800 x 600, 1024 x 768, 1152 x 864, 1176 x 664, 1280 x 768, 1280 x 768, 1280 x 800
+Texture Quality: Low, Medium, High, Very High
+AA method: None, FSAA, SMAA
+AA quality: Low, Medium, High
+Shadow Quality: None, Low, Medium, High
+Shadow Distance: 0 - 500

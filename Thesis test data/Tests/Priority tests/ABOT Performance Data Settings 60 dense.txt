@@ -1,0 +1,138 @@
+Default settings:
+Time: 6/6/2023 4:28:43 PM
+
+Time tested: 10.02114
+Lowest frame rate: 11.99023
+Highest frame rate 15.04375
+Target frame rate: 60
+Time under target frame rate:10.02114
+Average under target frame rate:13.47355
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 4
+Resolution: 4
+Texture quality: 3
+Antialiazing method: 2
+Antialiazing quality: 2
+Shadow quality: 3
+Shadow distance 500
+
+
+Adjusted settings attempt 0:
+Time: 6/6/2023 4:28:56 PM
+
+Time tested: 10.00448
+Lowest frame rate: 14.95253
+Highest frame rate 15.0345
+Target frame rate: 60
+Time under target frame rate:10.00448
+Average under target frame rate:13.49322
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 4
+Resolution: 4
+Texture quality: 3
+Antialiazing method: 2
+Antialiazing quality: 2
+Shadow quality: 3
+Shadow distance 100
+
+
+Adjusted settings attempt 1:
+Time: 6/6/2023 4:29:09 PM
+
+Time tested: 10.0046
+Lowest frame rate: 14.94567
+Highest frame rate 15.0302
+Target frame rate: 60
+Time under target frame rate:10.0046
+Average under target frame rate:13.49312
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 4
+Resolution: 4
+Texture quality: 3
+Antialiazing method: 2
+Antialiazing quality: 2
+Shadow quality: 3
+Shadow distance 100
+
+
+Adjusted settings attempt 2:
+Time: 6/6/2023 4:29:22 PM
+
+Time tested: 10.00438
+Lowest frame rate: 14.9551
+Highest frame rate 15.03646
+Target frame rate: 60
+Time under target frame rate:10.00438
+Average under target frame rate:13.4941
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 4
+Resolution: 4
+Texture quality: 3
+Antialiazing method: 2
+Antialiazing quality: 2
+Shadow quality: 0
+Shadow distance 100
+
+
+Adjusted settings attempt 3:
+Time: 6/6/2023 4:29:35 PM
+
+Time tested: 10.00442
+Lowest frame rate: 14.93717
+Highest frame rate 15.04551
+Target frame rate: 60
+Time under target frame rate:10.00442
+Average under target frame rate:13.49367
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 4
+Resolution: 4
+Texture quality: 3
+Antialiazing method: 0
+Antialiazing quality: 2
+Shadow quality: 0
+Shadow distance 100
+
+
+Adjusted settings attempt 4:
+Time: 6/6/2023 4:29:45 PM
+
+Time tested: 7.019815
+Lowest frame rate: 59.44278
+Highest frame rate 60.03303
+Target frame rate: 60
+Time under target frame rate:7.019815
+Average under target frame rate:51.42613
+Time above target frame rate:0
+Average above target frame rate:0
+
+Settings: 
+Fullscreen: False
+V-Synch: 1
+Resolution: 4
+Texture quality: 3
+Antialiazing method: 0
+Antialiazing quality: 2
+Shadow quality: 0
+Shadow distance 100
+
+

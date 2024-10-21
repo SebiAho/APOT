@@ -1,0 +1,44 @@
+What tests will be performed?
+
+- Each method will be tested separately.
+- Each method will be tested against the 30fps and 60fps target.
+- Each method fps test will be run using the normal trees, dense trees and extra dense trees scene settings.
+- Each test will be started at the Very-high preset.
+- This totals 6 tests for each method, for a total of 12 tests.
+- Test results will be collected to an exel table and analyzed later on this chapter.
+
+Test process:
+1. Start the application.
+2. Select the tree amount, which it either Normal Trees, Dense Trees or Extra Dense Trees depending on the test.
+3. Select the Graphics menu.
+4. Change the setting to the Very High preset.
+5. Press the Apply Settings button. 
+6. Select the ABOT menu.
+7. Set the correct frame rate which is either 30 or 60 depending on the test.
+8. Start the test.
+9. Waith for the test to run.
+10. Close the application to ensure that the settings will be clean on repeated tests.
+11. Move the data from the "ABOT Performance Data.text" file to an excel table.
+
+The previous will be repeated for each test.
+The reason for closing the application between tests is reset its values.
+
+//Tests performed.
+Preset based method.		Done?
+1. 30fp, normal trees.		
+2. 30fp, dense trees.		
+3. 30fp, extra dense trees.		
+
+4. 60fp, normal trees.		
+5. 60fp, dense trees.		
+6. 60fp, extra dense trees.	
+
+Setting based method.
+Preset based method.		Done?
+1. 30fp, normal trees.		
+2. 30fp, dense trees.		
+3. 30fp, extra dense trees.		
+
+4. 60fp, normal trees.		
+5. 60fp, dense trees.		
+6. 60fp, extra dense trees.
