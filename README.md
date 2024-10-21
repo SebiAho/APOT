@@ -14,5 +14,5 @@ The project uses free Unity Store asset "Unity Terrain - URP Demo Scene" for gra
 While the scene includes some of its own code, this isn't used within the test code itself outside  possible graphical effects).
 The asset  isin`t included with the project due to the storage limits on a GitHub account.
 
-The folder "Scripts" contains code written specifically for the project.
+The folder "Assets/Scripts" contains code written specifically for the project.
 The folder "Project pictures" contains screenshots from the project and the code.
