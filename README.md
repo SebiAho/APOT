@@ -16,3 +16,4 @@ The asset  isin`t included with the project due to the storage limits on a GitHu
 
 The folder "Assets/Scripts" contains code written specifically for the project.
 The folder "Project pictures" contains screenshots from the project and the code.
+The folder "Project test data" contains information about the tests performed witht the project and the test data itself.
