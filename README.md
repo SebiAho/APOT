@@ -15,4 +15,4 @@ While the scene includes some of its own code, this isn't used within the test c
 The asset  isin`t included with the project due to the storage limits on a GitHub account.
 
 The folder "Scripts" contains code written specifically for the project.
-The folder Project pictures contains screenshots from the project and the code.
+The folder "Project pictures" contains screenshots from the project and the code.
