@@ -1,0 +1,28 @@
+Do not add!!!
+Unity version 2021.3.8f1
+Visual Studio version 2019 
+
+Category	Picture Name
+Menus
+		Main menu
+		Scene Selection menu
+		ABOT menu
+		Graphics menu
+		Pause Menu
+
+Inspector windows
+		ABOT handler and data tracker inspector window
+		User and automatic movement handler inspector window
+
+Game
+		Game view
+		Selecting the optimization method
+
+Code
+		The sorting method
+		The preset container
+		Perfromance handler variables
+		The value container
+		Tracked perfromance data
+
+The test
